@@ -22,10 +22,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.maa.health.ui.screens.care.CareHubScreen
 import com.maa.health.ui.screens.childcare.ChildCareHomeScreen
 import com.maa.health.ui.screens.cycle.CycleHomeScreen
 import com.maa.health.ui.screens.emergency.EmergencyScreen
 import com.maa.health.ui.screens.home.HomeScreen
+import com.maa.health.ui.screens.learn.LearnHubScreen
 import com.maa.health.ui.screens.mentalhealth.MentalHealthHomeScreen
 import com.maa.health.ui.screens.onboarding.LanguageSelectionScreen
 import com.maa.health.ui.screens.onboarding.LifecycleStageSelectionScreen
@@ -36,6 +38,8 @@ import com.maa.health.ui.screens.onboarding.SplashScreen
 import com.maa.health.ui.screens.pregnancy.PregnancyHomeScreen
 import com.maa.health.ui.screens.settings.SettingsScreen
 import com.maa.health.ui.screens.symptom.SymptomTriageScreen
+import com.maa.health.ui.screens.track.TrackHubScreen
+import com.maa.health.ui.screens.you.YouHubScreen
 
 /**
  * Main navigation host for Maa app
@@ -166,6 +170,107 @@ fun MaaNavHost(
                 },
                 onNavigateToEmergency = {
                     navController.navigate(Screen.EmergencyScreen.route)
+                }
+            )
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════════
+        // BOTTOM NAV HUB SCREENS
+        // ═══════════════════════════════════════════════════════════════════════════
+
+        composable(Screen.TrackHub.route) {
+            TrackHubScreen(
+                onNavigateToBodyMap = {
+                    navController.navigate(Screen.BodyMap.route)
+                },
+                onNavigateToCycle = {
+                    navController.navigate(Screen.CycleHome.route)
+                },
+                onNavigateToMood = {
+                    navController.navigate(Screen.MentalHealthHome.route)
+                },
+                onNavigateToSymptomHistory = {
+                    navController.navigate(Screen.TriageHistory.route)
+                }
+            )
+        }
+
+        composable(Screen.LearnHub.route) {
+            LearnHubScreen(
+                onNavigateToArticle = { articleId ->
+                    navController.navigate(Screen.ArticleDetail.createRoute(articleId))
+                },
+                onNavigateToVideos = {
+                    navController.navigate(Screen.HealthLibrary.route)
+                },
+                onNavigateToSearch = {
+                    navController.navigate(Screen.FAQ.route)
+                }
+            )
+        }
+
+        composable(Screen.CareHub.route) {
+            CareHubScreen(
+                onNavigateToPregnancy = {
+                    navController.navigate(Screen.PregnancyHome.route)
+                },
+                onNavigateToChildCare = {
+                    navController.navigate(Screen.ChildCareHome.route)
+                },
+                onNavigateToVaccinations = {
+                    navController.navigate(Screen.ChildCareHome.route)
+                },
+                onNavigateToMedications = {
+                    navController.navigate(Screen.MedicationManager.route)
+                },
+                onNavigateToAppointments = {
+                    // TODO: Appointments screen
+                },
+                onAddChild = {
+                    navController.navigate(Screen.AddChild.route)
+                }
+            )
+        }
+
+        composable(Screen.YouHub.route) {
+            YouHubScreen(
+                onNavigateToEditProfile = {
+                    navController.navigate(Screen.ProfileEdit.route)
+                },
+                onNavigateToLanguage = {
+                    navController.navigate(Screen.LanguageSettings.route)
+                },
+                onNavigateToVoiceSettings = {
+                    // TODO: Voice settings screen
+                },
+                onNavigateToNotifications = {
+                    navController.navigate(Screen.NotificationSettings.route)
+                },
+                onNavigateToHealthMonitoring = {
+                    // TODO: Health monitoring settings
+                },
+                onExportData = {
+                    navController.navigate(Screen.DataExport.route)
+                },
+                onCloudSync = {
+                    // TODO: Trigger cloud sync
+                },
+                onDeleteAccount = {
+                    // TODO: Delete account confirmation
+                },
+                onNavigateToPrivacy = {
+                    navController.navigate(Screen.PrivacySettings.route)
+                },
+                onNavigateToHelp = {
+                    navController.navigate(Screen.HelpSupport.route)
+                },
+                onNavigateToPremium = {
+                    navController.navigate(Screen.Subscription.route)
+                },
+                onLogout = {
+                    navController.navigate(Screen.LanguageSelection.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
                 }
             )
         }

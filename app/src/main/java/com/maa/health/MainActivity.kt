@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.rememberNavController
-import com.maa.health.navigation.MaaNavHost
+import com.maa.health.ui.MaaApp
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * Main Activity for Maa
  *
  * Single-activity architecture using Jetpack Compose Navigation
+ * Features bottom navigation bar for global navigation
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -37,8 +37,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaaColors.background
                 ) {
-                    val navController = rememberNavController()
-                    MaaNavHost(navController = navController)
+                    MaaApp()
                 }
             }
         }

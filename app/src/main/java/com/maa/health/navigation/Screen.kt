@@ -23,10 +23,16 @@ sealed class Screen(val route: String) {
     data object OnboardingComplete : Screen("onboarding/complete")
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // MAIN NAVIGATION
+    // MAIN NAVIGATION (Bottom Nav Tabs)
     // ═══════════════════════════════════════════════════════════════════════════
 
     data object Home : Screen("home")
+    data object TrackHub : Screen("track")        // Track tab hub
+    data object LearnHub : Screen("learn")        // Learn tab hub
+    data object CareHub : Screen("care")          // Care tab hub
+    data object YouHub : Screen("you")            // You/Profile tab hub
+
+    // Legacy routes (kept for compatibility)
     data object Insights : Screen("insights")
     data object History : Screen("history")
     data object Settings : Screen("settings")
