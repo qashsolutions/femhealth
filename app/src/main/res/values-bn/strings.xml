@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">মা</string>
+    <string name="app_tagline">আপনার আজীবন স্বাস্থ্য সঙ্গী</string>
+
+    <!-- Onboarding -->
+    <string name="select_language">আপনার ভাষা নির্বাচন করুন</string>
+    <string name="enter_phone">আপনার ফোন নম্বর দিন</string>
+    <string name="phone_subtitle">আমরা আপনাকে একটি যাচাইকরণ কোড পাঠাব</string>
+    <string name="speak_number">আপনার নম্বর বলুন</string>
+    <string name="proceed">এগিয়ে যান</string>
+    <string name="verify_otp">OTP যাচাই করুন</string>
+    <string name="otp_sent_to">%1$s-এ OTP পাঠানো হয়েছে</string>
+    <string name="resend_otp">OTP পুনরায় পাঠান</string>
+    <string name="resend_in">%1$d সেকেন্ডে পুনরায় পাঠান</string>
+    <string name="setup_biometric_title">দ্রুত লগইন সক্ষম করুন</string>
+    <string name="setup_biometric_subtitle">দ্রুত অ্যাক্সেসের জন্য ফিঙ্গারপ্রিন্ট বা ফেস রিকগনিশন ব্যবহার করুন</string>
+    <string name="enable_biometric">বায়োমেট্রিক সক্ষম করুন</string>
+    <string name="skip_for_now">এখনকার জন্য এড়িয়ে যান</string>
+
+    <!-- Profile Setup -->
+    <string name="i_am">আমি...</string>
+    <string name="teenager">একজন কিশোরী</string>
+    <string name="adult_woman">একজন প্রাপ্তবয়স্ক মহিলা</string>
+    <string name="pregnant">গর্ভবতী</string>
+    <string name="new_mother">একজন নতুন মা</string>
+    <string name="mother_of_child">একটি সন্তানের মা</string>
+    <string name="in_midlife">মধ্যবয়সে</string>
+    <string name="elder">একজন প্রবীণ</string>
+    <string name="your_age">আপনার বয়স</string>
+    <string name="pregnancy_week">গর্ভাবস্থার সপ্তাহ</string>
+    <string name="child_dob">সন্তানের জন্ম তারিখ</string>
+
+    <!-- Home -->
+    <string name="home">হোম</string>
+    <string name="track">ট্র্যাক</string>
+    <string name="learn">শিখুন</string>
+    <string name="settings">সেটিংস</string>
+    <string name="tap_body_region">বিকল্পের জন্য শরীরের অংশে ট্যাপ করুন</string>
+    <string name="quick_actions">দ্রুত কার্যক্রম</string>
+    <string name="upcoming">আসন্ন</string>
+
+    <!-- Body Regions -->
+    <string name="head">মাথা</string>
+    <string name="chest">বুক</string>
+    <string name="abdomen">পেট</string>
+    <string name="pelvis">পেলভিস</string>
+    <string name="hands">হাত</string>
+    <string name="feet">পা</string>
+    <string name="skin">ত্বক</string>
+    <string name="uterus">জরায়ু</string>
+
+    <!-- Symptoms -->
+    <string name="symptoms">লক্ষণ</string>
+    <string name="describe_symptoms">আপনার লক্ষণ বর্ণনা করুন</string>
+    <string name="assess">মূল্যায়ন করুন</string>
+    <string name="fever">জ্বর</string>
+    <string name="headache">মাথাব্যথা</string>
+    <string name="bleeding">রক্তপাত</string>
+    <string name="pain">ব্যথা</string>
+    <string name="swelling">ফোলা</string>
+    <string name="nausea">বমি বমি ভাব</string>
+    <string name="fatigue">ক্লান্তি</string>
+    <string name="cough">কাশি</string>
+    <string name="diarrhea">ডায়রিয়া</string>
+    <string name="vomiting">বমি</string>
+
+    <!-- Mental Health -->
+    <string name="mental_health_check">মানসিক স্বাস্থ্য পরীক্ষা</string>
+    <string name="how_are_you_feeling">আজ আপনি কেমন অনুভব করছেন?</string>
+    <string name="mood">মেজাজ</string>
+    <string name="energy">শক্তি</string>
+    <string name="sleep">ঘুমের মান</string>
+    <string name="anxiety">উদ্বেগের মাত্রা</string>
+
+    <!-- Cycle Tracking -->
+    <string name="cycle_tracking">মাসিক চক্র ট্র্যাকিং</string>
+    <string name="log_period">পিরিয়ড লগ করুন</string>
+    <string name="flow_today">আজকের প্রবাহ</string>
+    <string name="spotting">স্পটিং</string>
+    <string name="light">হালকা</string>
+    <string name="medium">মাঝারি</string>
+    <string name="heavy">ভারী</string>
+    <string name="or_speak">অথবা বলে বর্ণনা করুন</string>
+    <string name="save">সংরক্ষণ করুন</string>
+    <string name="predicted_period">পূর্বাভাসিত পিরিয়ড</string>
+    <string name="predicted_ovulation">পূর্বাভাসিত ওভুলেশন</string>
+
+    <!-- Pregnancy -->
+    <string name="pregnancy_home">গর্ভাবস্থা</string>
+    <string name="week_of">৪০-এর মধ্যে সপ্তাহ %1$d</string>
+    <string name="kick_counter">কিক কাউন্টার</string>
+    <string name="count_kicks">কিক গুনুন</string>
+    <string name="kicks_today">আজকের কিক</string>
+    <string name="danger_signs">বিপদ সংকেত</string>
+    <string name="check_danger_signs">বিপদ সংকেত পরীক্ষা করুন</string>
+    <string name="anc_visits">প্রসবপূর্ব পরিদর্শন</string>
+    <string name="next_visit">পরবর্তী পরিদর্শন</string>
+
+    <!-- Child Care -->
+    <string name="child_care">শিশু যত্ন</string>
+    <string name="whats_wrong">বাচ্চার কী হয়েছে?</string>
+    <string name="breathing_assessment">শ্বাস মূল্যায়ন</string>
+    <string name="count_breaths_instruction">বাচ্চার বুক দেখুন এবং প্রতিটি শ্বাসে ট্যাপ করুন</string>
+    <string name="breaths">শ্বাস</string>
+    <string name="seconds">সেকেন্ড</string>
+    <string name="chest_indrawing_question">শ্বাস নেওয়ার সময় কি বুক ভেতরে টানে?</string>
+    <string name="normal">স্বাভাবিক</string>
+    <string name="indrawing">বুক ভেতরে টানা</string>
+    <string name="continue_btn">চালিয়ে যান</string>
+    <string name="vaccination">টিকা</string>
+    <string name="growth">বৃদ্ধি</string>
+    <string name="milestones">মাইলফলক</string>
+
+    <!-- Triage Results -->
+    <string name="emergency">জরুরি অবস্থা</string>
+    <string name="urgent">জরুরি</string>
+    <string name="routine">নিয়মিত</string>
+    <string name="self_care">স্ব-যত্ন</string>
+    <string name="go_to_hospital_now">এখনই হাসপাতালে যান</string>
+    <string name="go_to_hospital_today">আজই হাসপাতালে যান</string>
+    <string name="schedule_visit">পরিদর্শন নির্ধারণ করুন</string>
+    <string name="home_care">বাড়িতে যত্নের পরামর্শ</string>
+
+    <!-- Voice -->
+    <string name="listening">শুনছি...</string>
+    <string name="voice_input">ভয়েস ইনপুট</string>
+    <string name="speak_now">এখন বলুন</string>
+
+    <!-- Subscription -->
+    <string name="choose_plan">আপনার প্ল্যান বেছে নিন</string>
+    <string name="monthly">মাসিক</string>
+    <string name="yearly">বার্ষিক</string>
+    <string name="start_free_trial">৭ দিনের বিনামূল্যে ট্রায়াল শুরু করুন</string>
+    <string name="trial_terms">৭ দিনের বিনামূল্যে ট্রায়াল, তারপর সাবস্ক্রিপশন শুরু</string>
+    <string name="premium">প্রিমিয়াম</string>
+    <string name="free">বিনামূল্যে</string>
+
+    <!-- Settings -->
+    <string name="profile">প্রোফাইল</string>
+    <string name="language">ভাষা</string>
+    <string name="subscription">সাবস্ক্রিপশন</string>
+    <string name="notifications">বিজ্ঞপ্তি</string>
+    <string name="privacy">গোপনীয়তা</string>
+    <string name="help">সাহায্য</string>
+    <string name="logout">লগআউট</string>
+
+    <!-- Emergency -->
+    <string name="emergency_contacts">জরুরি যোগাযোগ</string>
+    <string name="ambulance">অ্যাম্বুলেন্স</string>
+    <string name="women_helpline">মহিলা হেল্পলাইন</string>
+    <string name="childline">চাইল্ডলাইন</string>
+    <string name="call_now">এখনই কল করুন</string>
+
+    <!-- Common -->
+    <string name="cancel">বাতিল</string>
+    <string name="confirm">নিশ্চিত করুন</string>
+    <string name="done">সম্পন্ন</string>
+    <string name="next">পরবর্তী</string>
+    <string name="back">পিছনে</string>
+    <string name="loading">লোড হচ্ছে...</string>
+    <string name="error">ত্রুটি</string>
+    <string name="retry">পুনরায় চেষ্টা করুন</string>
+    <string name="no_internet">ইন্টারনেট সংযোগ নেই</string>
+    <string name="offline_mode">অফলাইন মোড</string>
+</resources>

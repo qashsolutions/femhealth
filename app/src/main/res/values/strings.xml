@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Maa</string>
+    <string name="app_tagline">Your Lifetime Health Companion</string>
+
+    <!-- Onboarding -->
+    <string name="select_language">Select Your Language</string>
+    <string name="enter_phone">Enter Your Phone Number</string>
+    <string name="phone_subtitle">We will send you a verification code</string>
+    <string name="speak_number">Speak your number</string>
+    <string name="proceed">Proceed</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="otp_sent_to">OTP sent to %1$s</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="resend_in">Resend in %1$d seconds</string>
+    <string name="setup_biometric_title">Enable Quick Login</string>
+    <string name="setup_biometric_subtitle">Use fingerprint or face recognition for faster access</string>
+    <string name="enable_biometric">Enable Biometric</string>
+    <string name="skip_for_now">Skip for now</string>
+
+    <!-- Profile Setup -->
+    <string name="i_am">I am...</string>
+    <string name="teenager">A Teenager</string>
+    <string name="adult_woman">An Adult Woman</string>
+    <string name="pregnant">Pregnant</string>
+    <string name="new_mother">A New Mother</string>
+    <string name="mother_of_child">Mother of a Child</string>
+    <string name="in_midlife">In Midlife</string>
+    <string name="elder">An Elder</string>
+    <string name="your_age">Your Age</string>
+    <string name="pregnancy_week">Pregnancy Week</string>
+    <string name="child_dob">Child\'s Date of Birth</string>
+
+    <!-- Home -->
+    <string name="home">Home</string>
+    <string name="track">Track</string>
+    <string name="learn">Learn</string>
+    <string name="settings">Settings</string>
+    <string name="tap_body_region">Tap a body region for options</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="upcoming">Upcoming</string>
+
+    <!-- Body Regions -->
+    <string name="head">Head</string>
+    <string name="chest">Chest</string>
+    <string name="abdomen">Abdomen</string>
+    <string name="pelvis">Pelvis</string>
+    <string name="hands">Hands</string>
+    <string name="feet">Feet</string>
+    <string name="skin">Skin</string>
+    <string name="uterus">Uterus</string>
+
+    <!-- Symptoms -->
+    <string name="symptoms">Symptoms</string>
+    <string name="describe_symptoms">Describe your symptoms</string>
+    <string name="assess">Assess</string>
+    <string name="fever">Fever</string>
+    <string name="headache">Headache</string>
+    <string name="bleeding">Bleeding</string>
+    <string name="pain">Pain</string>
+    <string name="swelling">Swelling</string>
+    <string name="nausea">Nausea</string>
+    <string name="fatigue">Fatigue</string>
+    <string name="cough">Cough</string>
+    <string name="diarrhea">Diarrhea</string>
+    <string name="vomiting">Vomiting</string>
+
+    <!-- Mental Health -->
+    <string name="mental_health_check">Mental Health Check</string>
+    <string name="how_are_you_feeling">How are you feeling today?</string>
+    <string name="mood">Mood</string>
+    <string name="energy">Energy</string>
+    <string name="sleep">Sleep Quality</string>
+    <string name="anxiety">Anxiety Level</string>
+
+    <!-- Cycle Tracking -->
+    <string name="cycle_tracking">Cycle Tracking</string>
+    <string name="log_period">Log Period</string>
+    <string name="flow_today">Flow Today</string>
+    <string name="spotting">Spotting</string>
+    <string name="light">Light</string>
+    <string name="medium">Medium</string>
+    <string name="heavy">Heavy</string>
+    <string name="or_speak">Or speak to describe</string>
+    <string name="save">Save</string>
+    <string name="predicted_period">Predicted Period</string>
+    <string name="predicted_ovulation">Predicted Ovulation</string>
+
+    <!-- Pregnancy -->
+    <string name="pregnancy_home">Pregnancy</string>
+    <string name="week_of">Week %1$d of 40</string>
+    <string name="kick_counter">Kick Counter</string>
+    <string name="count_kicks">Count Kicks</string>
+    <string name="kicks_today">Kicks Today</string>
+    <string name="danger_signs">Danger Signs</string>
+    <string name="check_danger_signs">Check for Danger Signs</string>
+    <string name="anc_visits">ANC Visits</string>
+    <string name="next_visit">Next Visit</string>
+
+    <!-- Child Care -->
+    <string name="child_care">Child Care</string>
+    <string name="whats_wrong">What\'s wrong with baby?</string>
+    <string name="breathing_assessment">Breathing Assessment</string>
+    <string name="count_breaths_instruction">Watch baby\'s chest and tap for each breath</string>
+    <string name="breaths">breaths</string>
+    <string name="seconds">seconds</string>
+    <string name="chest_indrawing_question">Does the chest pull in when breathing?</string>
+    <string name="normal">Normal</string>
+    <string name="indrawing">Chest Indrawing</string>
+    <string name="continue_btn">Continue</string>
+    <string name="vaccination">Vaccination</string>
+    <string name="growth">Growth</string>
+    <string name="milestones">Milestones</string>
+
+    <!-- Triage Results -->
+    <string name="emergency">Emergency</string>
+    <string name="urgent">Urgent</string>
+    <string name="routine">Routine</string>
+    <string name="self_care">Self Care</string>
+    <string name="go_to_hospital_now">Go to hospital immediately</string>
+    <string name="go_to_hospital_today">Go to hospital today</string>
+    <string name="schedule_visit">Schedule a visit</string>
+    <string name="home_care">Home care recommended</string>
+
+    <!-- Voice -->
+    <string name="listening">Listening...</string>
+    <string name="voice_input">Voice Input</string>
+    <string name="speak_now">Speak now</string>
+
+    <!-- Subscription -->
+    <string name="choose_plan">Choose Your Plan</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="start_free_trial">Start 7-Day Free Trial</string>
+    <string name="trial_terms">7-day free trial, then subscription begins</string>
+    <string name="premium">Premium</string>
+    <string name="free">Free</string>
+
+    <!-- Settings -->
+    <string name="profile">Profile</string>
+    <string name="language">Language</string>
+    <string name="subscription">Subscription</string>
+    <string name="notifications">Notifications</string>
+    <string name="privacy">Privacy</string>
+    <string name="help">Help</string>
+    <string name="logout">Logout</string>
+
+    <!-- Emergency -->
+    <string name="emergency_contacts">Emergency Contacts</string>
+    <string name="ambulance">Ambulance</string>
+    <string name="women_helpline">Women Helpline</string>
+    <string name="childline">Childline</string>
+    <string name="call_now">Call Now</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="done">Done</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="offline_mode">Offline Mode</string>
+</resources>
