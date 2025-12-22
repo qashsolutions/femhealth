@@ -24,8 +24,11 @@ class UserPreferences @Inject constructor(
         val USER_ID = stringPreferencesKey("user_id")
         val PHONE_NUMBER = stringPreferencesKey("phone_number")
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
-        val LIFECYCLE_STAGE = stringPreferencesKey("lifecycle_stage")
+        val LIFECYCLE_STAGES = stringPreferencesKey("lifecycle_stages")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
+        val PIN_ENABLED = booleanPreferencesKey("pin_enabled")
+        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val OFFLINE_CONTENT_ENABLED = booleanPreferencesKey("offline_content_enabled")
         val IS_PREMIUM = booleanPreferencesKey("is_premium")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val LAST_SYNC_TIME = longPreferencesKey("last_sync_time")
@@ -44,17 +47,35 @@ class UserPreferences @Inject constructor(
             }
         }
         .map { preferences ->
+            val languageCode = preferences[Keys.LANGUAGE_CODE] ?: SupportedLanguage.HINDI.code
+            val language = SupportedLanguage.entries.find { it.code == languageCode }
+                ?: SupportedLanguage.HINDI
+
+            val stagesString = preferences[Keys.LIFECYCLE_STAGES] ?: ""
+            val lifecycleStages = if (stagesString.isBlank()) {
+                emptySet()
+            } else {
+                stagesString.split(",").mapNotNull { stageName ->
+                    try {
+                        LifecycleStage.valueOf(stageName.trim())
+                    } catch (e: IllegalArgumentException) {
+                        null
+                    }
+                }.toSet()
+            }
+
             UserPreferencesData(
                 isLoggedIn = preferences[Keys.IS_LOGGED_IN] ?: false,
-                userId = preferences[Keys.USER_ID],
+                oderId = preferences[Keys.USER_ID] ?: "",
                 phoneNumber = preferences[Keys.PHONE_NUMBER],
-                languageCode = preferences[Keys.LANGUAGE_CODE] ?: SupportedLanguage.HINDI.code,
-                lifecycleStage = preferences[Keys.LIFECYCLE_STAGE]?.let {
-                    LifecycleStage.valueOf(it)
-                },
+                language = language,
+                lifecycleStages = lifecycleStages,
                 biometricEnabled = preferences[Keys.BIOMETRIC_ENABLED] ?: false,
+                pinEnabled = preferences[Keys.PIN_ENABLED] ?: false,
+                notificationsEnabled = preferences[Keys.NOTIFICATIONS_ENABLED] ?: true,
+                offlineContentEnabled = preferences[Keys.OFFLINE_CONTENT_ENABLED] ?: false,
                 isPremium = preferences[Keys.IS_PREMIUM] ?: false,
-                onboardingCompleted = preferences[Keys.ONBOARDING_COMPLETED] ?: false,
+                isOnboardingComplete = preferences[Keys.ONBOARDING_COMPLETED] ?: false,
                 lastSyncTime = preferences[Keys.LAST_SYNC_TIME] ?: 0L,
                 voiceMinutesUsed = preferences[Keys.VOICE_MINUTES_USED] ?: 0,
                 freeScreeningsUsed = preferences[Keys.FREE_SCREENINGS_USED] ?: 0,
@@ -87,15 +108,15 @@ class UserPreferences @Inject constructor(
         }
     }
 
-    suspend fun setLanguage(languageCode: String) {
+    suspend fun setLanguage(language: SupportedLanguage) {
         dataStore.edit { preferences ->
-            preferences[Keys.LANGUAGE_CODE] = languageCode
+            preferences[Keys.LANGUAGE_CODE] = language.code
         }
     }
 
-    suspend fun setLifecycleStage(stage: LifecycleStage) {
+    suspend fun setLifecycleStages(stages: Set<LifecycleStage>) {
         dataStore.edit { preferences ->
-            preferences[Keys.LIFECYCLE_STAGE] = stage.name
+            preferences[Keys.LIFECYCLE_STAGES] = stages.joinToString(",") { it.name }
         }
     }
 
@@ -105,13 +126,31 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    suspend fun setPinEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.PIN_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setNotificationsEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.NOTIFICATIONS_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setOfflineContentEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[Keys.OFFLINE_CONTENT_ENABLED] = enabled
+        }
+    }
+
     suspend fun setPremium(isPremium: Boolean) {
         dataStore.edit { preferences ->
             preferences[Keys.IS_PREMIUM] = isPremium
         }
     }
 
-    suspend fun setOnboardingCompleted(completed: Boolean) {
+    suspend fun setOnboardingComplete(completed: Boolean) {
         dataStore.edit { preferences ->
             preferences[Keys.ONBOARDING_COMPLETED] = completed
         }
@@ -152,7 +191,7 @@ class UserPreferences @Inject constructor(
         }
     }
 
-    suspend fun clearAll() {
+    suspend fun clearAllPreferences() {
         dataStore.edit { preferences ->
             preferences.clear()
         }
@@ -164,13 +203,16 @@ class UserPreferences @Inject constructor(
  */
 data class UserPreferencesData(
     val isLoggedIn: Boolean = false,
-    val userId: String? = null,
+    val oderId: String = "",
     val phoneNumber: String? = null,
-    val languageCode: String = SupportedLanguage.HINDI.code,
-    val lifecycleStage: LifecycleStage? = null,
+    val language: SupportedLanguage = SupportedLanguage.HINDI,
+    val lifecycleStages: Set<LifecycleStage> = emptySet(),
     val biometricEnabled: Boolean = false,
+    val pinEnabled: Boolean = false,
+    val notificationsEnabled: Boolean = true,
+    val offlineContentEnabled: Boolean = false,
     val isPremium: Boolean = false,
-    val onboardingCompleted: Boolean = false,
+    val isOnboardingComplete: Boolean = false,
     val lastSyncTime: Long = 0L,
     val voiceMinutesUsed: Int = 0,
     val freeScreeningsUsed: Int = 0,

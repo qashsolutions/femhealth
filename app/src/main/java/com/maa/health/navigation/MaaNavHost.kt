@@ -4,21 +4,38 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.maa.health.ui.screens.childcare.ChildCareHomeScreen
+import com.maa.health.ui.screens.cycle.CycleHomeScreen
+import com.maa.health.ui.screens.emergency.EmergencyScreen
 import com.maa.health.ui.screens.home.HomeScreen
+import com.maa.health.ui.screens.mentalhealth.MentalHealthHomeScreen
 import com.maa.health.ui.screens.onboarding.LanguageSelectionScreen
 import com.maa.health.ui.screens.onboarding.LifecycleStageSelectionScreen
+import com.maa.health.ui.screens.onboarding.OtpVerificationScreen
 import com.maa.health.ui.screens.onboarding.PhoneAuthScreen
 import com.maa.health.ui.screens.onboarding.ProfileSetupScreen
 import com.maa.health.ui.screens.onboarding.SplashScreen
+import com.maa.health.ui.screens.pregnancy.PregnancyHomeScreen
+import com.maa.health.ui.screens.settings.SettingsScreen
+import com.maa.health.ui.screens.symptom.SymptomTriageScreen
 
 /**
  * Main navigation host for Maa app
@@ -95,15 +112,14 @@ fun MaaNavHost(
             )
         ) { backStackEntry ->
             val phoneNumber = backStackEntry.arguments?.getString(NavArgs.PHONE_NUMBER) ?: ""
-            // OtpVerificationScreen - placeholder
-            PlaceholderScreen(
-                title = "OTP Verification",
-                subtitle = "Verifying $phoneNumber",
-                onAction = {
+            OtpVerificationScreen(
+                phoneNumber = phoneNumber,
+                onVerified = {
                     navController.navigate(Screen.ProfileSetup.route) {
                         popUpTo(Screen.LanguageSelection.route) { inclusive = false }
                     }
-                }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -158,7 +174,7 @@ fun MaaNavHost(
             PlaceholderScreen(
                 title = "Insights",
                 subtitle = "Your health patterns and trends",
-                onAction = {}
+                onAction = { navController.popBackStack() }
             )
         }
 
@@ -166,15 +182,24 @@ fun MaaNavHost(
             PlaceholderScreen(
                 title = "History",
                 subtitle = "Your health timeline",
-                onAction = {}
+                onAction = { navController.popBackStack() }
             )
         }
 
         composable(Screen.Settings.route) {
-            PlaceholderScreen(
-                title = "Settings",
-                subtitle = "App preferences",
-                onAction = {}
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onEditProfile = { navController.navigate(Screen.ProfileSetup.route) },
+                onLanguageSettings = { navController.navigate(Screen.LanguageSelection.route) },
+                onNotificationSettings = { /* TODO */ },
+                onPrivacySettings = { /* TODO */ },
+                onDataExport = { /* TODO */ },
+                onAbout = { /* TODO */ },
+                onLogout = {
+                    navController.navigate(Screen.LanguageSelection.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -183,10 +208,9 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.BodyMap.route) {
-            PlaceholderScreen(
-                title = "Body Map",
-                subtitle = "Tap a body region to log symptoms",
-                onAction = { navController.popBackStack() }
+            SymptomTriageScreen(
+                onBack = { navController.popBackStack() },
+                onEmergency = { navController.navigate(Screen.EmergencyScreen.route) }
             )
         }
 
@@ -197,10 +221,9 @@ fun MaaNavHost(
             )
         ) { backStackEntry ->
             val region = backStackEntry.arguments?.getString(NavArgs.REGION) ?: ""
-            PlaceholderScreen(
-                title = "Log Symptom",
-                subtitle = "Region: $region",
-                onAction = { navController.popBackStack() }
+            SymptomTriageScreen(
+                onBack = { navController.popBackStack() },
+                onEmergency = { navController.navigate(Screen.EmergencyScreen.route) }
             )
         }
 
@@ -209,10 +232,11 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.PregnancyHome.route) {
-            PlaceholderScreen(
-                title = "Pregnancy",
-                subtitle = "Track your pregnancy journey",
-                onAction = { navController.popBackStack() }
+            PregnancyHomeScreen(
+                onBack = { navController.popBackStack() },
+                onKickCounter = { navController.navigate(Screen.KickCounter.route) },
+                onContractionTimer = { navController.navigate(Screen.ContractionTimer.route) },
+                onEmergency = { navController.navigate(Screen.EmergencyScreen.route) }
             )
         }
 
@@ -237,10 +261,15 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.ChildCareHome.route) {
-            PlaceholderScreen(
-                title = "Child Care",
-                subtitle = "Track your child's health",
-                onAction = { navController.popBackStack() }
+            ChildCareHomeScreen(
+                onBack = { navController.popBackStack() },
+                onVaccinations = { childId ->
+                    navController.navigate(Screen.VaccinationSchedule.createRoute(childId))
+                },
+                onGrowth = { childId ->
+                    navController.navigate(Screen.GrowthChart.createRoute(childId))
+                },
+                onSymptoms = { navController.navigate(Screen.BodyMap.route) }
             )
         }
 
@@ -277,10 +306,8 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.CycleHome.route) {
-            PlaceholderScreen(
-                title = "Cycle Tracking",
-                subtitle = "Track your menstrual cycle",
-                onAction = { navController.popBackStack() }
+            CycleHomeScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -297,10 +324,9 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.MentalHealthHome.route) {
-            PlaceholderScreen(
-                title = "Mental Wellness",
-                subtitle = "Track your mood and wellbeing",
-                onAction = { navController.popBackStack() }
+            MentalHealthHomeScreen(
+                onBack = { navController.popBackStack() },
+                onCrisisSupport = { navController.navigate(Screen.CrisisSupport.route) }
             )
         }
 
@@ -319,10 +345,9 @@ fun MaaNavHost(
         }
 
         composable(Screen.CrisisSupport.route) {
-            PlaceholderScreen(
-                title = "Crisis Support",
-                subtitle = "Get help now",
-                onAction = { navController.popBackStack() }
+            EmergencyScreen(
+                onBack = { navController.popBackStack() },
+                onFindHospital = { navController.navigate(Screen.NearbyFacilities.route) }
             )
         }
 
@@ -331,10 +356,9 @@ fun MaaNavHost(
         // ═══════════════════════════════════════════════════════════════════════════
 
         composable(Screen.EmergencyScreen.route) {
-            PlaceholderScreen(
-                title = "Emergency",
-                subtitle = "Get immediate help",
-                onAction = { navController.popBackStack() }
+            EmergencyScreen(
+                onBack = { navController.popBackStack() },
+                onFindHospital = { navController.navigate(Screen.NearbyFacilities.route) }
             )
         }
 
@@ -357,31 +381,25 @@ private fun PlaceholderScreen(
     subtitle: String,
     onAction: () -> Unit
 ) {
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier
-            .padding(PaddingValues())
-            .then(Modifier),
-        contentAlignment = androidx.compose.ui.Alignment.Center
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        androidx.compose.foundation.layout.Column(
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            androidx.compose.material3.Text(
+            Text(
                 text = title,
-                style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium
             )
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.padding(vertical = androidx.compose.ui.unit.dp(8))
-            )
-            androidx.compose.material3.Text(
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+            Text(
                 text = subtitle,
-                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium
             )
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.padding(vertical = androidx.compose.ui.unit.dp(16))
-            )
-            androidx.compose.material3.Button(onClick = onAction) {
-                androidx.compose.material3.Text("Back")
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
+            Button(onClick = onAction) {
+                Text("Back")
             }
         }
     }
