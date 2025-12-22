@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background Colors (Warm, not clinical white) -->
+    <color name="background">#FAF7F2</color>
+    <color name="surface">#F5F0EB</color>
+    <color name="surface_variant">#EDE6DD</color>
+    <color name="surface_elevated">#FFFFFF</color>
+
+    <!-- Text Colors (Warm blacks and grays) -->
+    <color name="text_primary">#2D2926</color>
+    <color name="text_secondary">#5C5550</color>
+    <color name="text_tertiary">#8A837C</color>
+    <color name="text_disabled">#B8B2AB</color>
+
+    <!-- SVG Body Illustration Colors -->
+    <color name="body_fill">#F5EDE5</color>
+    <color name="body_stroke">#3D3632</color>
+    <color name="body_stroke_light">#8A837C</color>
+    <color name="organ_fill">#E8DFD4</color>
+    <color name="organ_highlight">#D4C4B0</color>
+
+    <!-- Semantic Colors -->
+    <color name="safe">#4A7C59</color>
+    <color name="safe_light">#E8F0EA</color>
+    <color name="info">#5B7B8C</color>
+    <color name="info_light">#E8EEF1</color>
+    <color name="caution">#D4A84B</color>
+    <color name="caution_light">#F8F3E6</color>
+    <color name="warning">#CC7B4A</color>
+    <color name="warning_light">#FAF0EB</color>
+    <color name="danger">#B54D4D</color>
+    <color name="danger_light">#FAEBEB</color>
+
+    <!-- Accent Colors -->
+    <color name="accent">#8B6F5C</color>
+    <color name="accent_light">#C4A98C</color>
+    <color name="accent_dark">#5C4A3D</color>
+
+    <!-- Lifecycle Stage Colors -->
+    <color name="stage_adolescence">#E8D4C8</color>
+    <color name="stage_reproductive">#D4C4B0</color>
+    <color name="stage_pregnancy">#E2D5C7</color>
+    <color name="stage_postpartum">#D8CFC4</color>
+    <color name="stage_child_care">#DCE4D8</color>
+    <color name="stage_midlife">#D4D0C8</color>
+    <color name="stage_elder">#E0DCD6</color>
+</resources>
