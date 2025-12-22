@@ -1,0 +1,129 @@
+<svg width="375" height="812" viewBox="0 0 375 812" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Status Bar -->
+  <rect width="375" height="44" fill="#FAF7F2"/>
+  <text x="21" y="30" font-family="SF Pro, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#2D2926">9:41</text>
+  <!-- Battery, Signal, WiFi icons area -->
+  <rect x="336" y="17" width="25" height="12" rx="3" stroke="#2D2926" stroke-width="1"/>
+  <rect x="338" y="19" width="18" height="8" rx="2" fill="#2D2926"/>
+  <rect x="361" y="20" width="1.5" height="5" rx="0.5" fill="#2D2926"/>
+
+  <!-- Background -->
+  <rect y="44" width="375" height="768" fill="#FAF7F2"/>
+
+  <!-- Top App Bar -->
+  <rect y="44" width="375" height="64" fill="#FAF7F2"/>
+
+  <!-- Greeting Section -->
+  <text x="24" y="84" font-family="Georgia, serif" font-size="24" font-weight="600" fill="#2D2926">Namaste</text>
+  <text x="24" y="108" font-family="-apple-system, sans-serif" font-size="14" fill="#5C5550">How are you feeling today?</text>
+
+  <!-- Emergency Button -->
+  <rect x="295" y="68" width="56" height="36" rx="8" fill="#FAEbeb"/>
+  <text x="306" y="91" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#B54D4D">SOS</text>
+
+  <!-- Quick Actions Section -->
+  <text x="24" y="152" font-family="-apple-system, sans-serif" font-size="16" font-weight="600" fill="#2D2926">Quick Actions</text>
+
+  <!-- Body Map Card -->
+  <rect x="24" y="168" width="327" height="100" rx="12" fill="#F5F0EB"/>
+  <rect x="40" y="184" width="48" height="48" rx="24" fill="#EDE6DD"/>
+  <!-- Body silhouette icon -->
+  <ellipse cx="64" cy="196" rx="8" ry="8" fill="#8B6F5C"/>
+  <path d="M56 208 L72 208 L72 224 L56 224 Z" fill="#8B6F5C"/>
+  <text x="104" y="204" font-family="-apple-system, sans-serif" font-size="16" font-weight="600" fill="#2D2926">Check Symptoms</text>
+  <text x="104" y="224" font-family="-apple-system, sans-serif" font-size="13" fill="#5C5550">Tap any body part to log symptoms</text>
+  <text x="104" y="248" font-family="-apple-system, sans-serif" font-size="12" fill="#8A837C">Get AI-powered triage</text>
+
+  <!-- Life Stage Cards Row -->
+  <text x="24" y="296" font-family="-apple-system, sans-serif" font-size="16" font-weight="600" fill="#2D2926">Your Health Journey</text>
+
+  <!-- Pregnancy Card -->
+  <rect x="24" y="312" width="156" height="120" rx="12" fill="#E2D5C7"/>
+  <rect x="40" y="328" width="36" height="36" rx="18" fill="rgba(139,111,92,0.2)"/>
+  <circle cx="58" cy="346" r="10" fill="#8B6F5C"/>
+  <text x="40" y="384" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#2D2926">Pregnancy</text>
+  <text x="40" y="402" font-family="-apple-system, sans-serif" font-size="12" fill="#5C5550">Track your journey</text>
+  <text x="40" y="420" font-family="-apple-system, sans-serif" font-size="11" fill="#8A837C">Week 24</text>
+
+  <!-- Child Care Card -->
+  <rect x="195" y="312" width="156" height="120" rx="12" fill="#DCE4D8"/>
+  <rect x="211" y="328" width="36" height="36" rx="18" fill="rgba(74,124,89,0.2)"/>
+  <circle cx="229" cy="346" r="10" fill="#4A7C59"/>
+  <text x="211" y="384" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#2D2926">Child Care</text>
+  <text x="211" y="402" font-family="-apple-system, sans-serif" font-size="12" fill="#5C5550">Track growth</text>
+  <text x="211" y="420" font-family="-apple-system, sans-serif" font-size="11" fill="#8A837C">2 children</text>
+
+  <!-- Cycle Tracking Card -->
+  <rect x="24" y="448" width="156" height="120" rx="12" fill="#D4C4B0"/>
+  <rect x="40" y="464" width="36" height="36" rx="18" fill="rgba(212,168,75,0.2)"/>
+  <circle cx="58" cy="482" r="10" fill="#D4A84B"/>
+  <text x="40" y="520" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#2D2926">Cycle Tracking</text>
+  <text x="40" y="538" font-family="-apple-system, sans-serif" font-size="12" fill="#5C5550">Log your period</text>
+  <text x="40" y="556" font-family="-apple-system, sans-serif" font-size="11" fill="#8A837C">Day 14 of cycle</text>
+
+  <!-- Mental Health Card -->
+  <rect x="195" y="448" width="156" height="120" rx="12" fill="#E8EEF1"/>
+  <rect x="211" y="464" width="36" height="36" rx="18" fill="rgba(91,123,140,0.2)"/>
+  <circle cx="229" cy="482" r="10" fill="#5B7B8C"/>
+  <text x="211" y="520" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#2D2926">Mental Health</text>
+  <text x="211" y="538" font-family="-apple-system, sans-serif" font-size="12" fill="#5C5550">How do you feel?</text>
+  <text x="211" y="556" font-family="-apple-system, sans-serif" font-size="11" fill="#8A837C">Log mood</text>
+
+  <!-- Today's Summary -->
+  <text x="24" y="600" font-family="-apple-system, sans-serif" font-size="16" font-weight="600" fill="#2D2926">Today's Summary</text>
+
+  <rect x="24" y="616" width="327" height="72" rx="12" fill="#F5F0EB"/>
+  <text x="40" y="644" font-family="-apple-system, sans-serif" font-size="14" fill="#2D2926">No symptoms logged today</text>
+  <text x="40" y="664" font-family="-apple-system, sans-serif" font-size="12" fill="#5C5550">Tap to log how you're feeling</text>
+
+  <!-- Bottom Navigation Bar -->
+  <rect y="732" width="375" height="80" fill="#F5F0EB"/>
+  <line x1="0" y1="732" x2="375" y2="732" stroke="#E5DFD8" stroke-width="1"/>
+
+  <!-- Home Tab (Active) -->
+  <g transform="translate(37.5, 748)">
+    <!-- House with heart icon -->
+    <path d="M15 8 L0 20 L4 20 L4 32 L26 32 L26 20 L30 20 Z" fill="#8B6F5C" stroke="#8B6F5C" stroke-width="1.5"/>
+    <path d="M15 18 C12 15 9 18 15 24 C21 18 18 15 15 18" fill="#F5F0EB"/>
+    <text x="15" y="48" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#8B6F5C" text-anchor="middle">Home</text>
+  </g>
+
+  <!-- Track Tab -->
+  <g transform="translate(112.5, 748)">
+    <!-- Calendar with pulse icon -->
+    <rect x="3" y="4" width="24" height="22" rx="3" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <line x1="3" y1="10" x2="27" y2="10" stroke="#8A837C" stroke-width="1.5"/>
+    <path d="M8 18 L12 14 L16 20 L20 16 L24 18" stroke="#8A837C" stroke-width="1.5" fill="none"/>
+    <text x="15" y="48" font-family="-apple-system, sans-serif" font-size="10" fill="#8A837C" text-anchor="middle">Track</text>
+  </g>
+
+  <!-- Learn Tab -->
+  <g transform="translate(187.5, 748)">
+    <!-- Book with lightbulb icon -->
+    <rect x="4" y="4" width="18" height="22" rx="2" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <line x1="13" y1="4" x2="13" y2="26" stroke="#8A837C" stroke-width="1"/>
+    <circle cx="22" cy="10" r="5" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <text x="15" y="48" font-family="-apple-system, sans-serif" font-size="10" fill="#8A837C" text-anchor="middle">Learn</text>
+  </g>
+
+  <!-- Care Tab -->
+  <g transform="translate(262.5, 748)">
+    <!-- Hands holding figure icon -->
+    <path d="M5 16 C5 12 10 10 15 10 C20 10 25 12 25 16" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <ellipse cx="15" cy="8" rx="4" ry="4" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <path d="M2 22 C2 18 8 16 15 16 C22 16 28 18 28 22" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <text x="15" y="48" font-family="-apple-system, sans-serif" font-size="10" fill="#8A837C" text-anchor="middle">Care</text>
+  </g>
+
+  <!-- You Tab -->
+  <g transform="translate(337.5, 748)">
+    <!-- Person with gear icon -->
+    <circle cx="12" cy="8" r="5" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <path d="M4 24 C4 18 8 14 12 14 C16 14 20 18 20 24" fill="none" stroke="#8A837C" stroke-width="1.5"/>
+    <circle cx="22" cy="18" r="4" fill="none" stroke="#8A837C" stroke-width="1"/>
+    <text x="15" y="48" font-family="-apple-system, sans-serif" font-size="10" fill="#8A837C" text-anchor="middle">You</text>
+  </g>
+
+  <!-- Home Indicator -->
+  <rect x="140" y="796" width="95" height="5" rx="2.5" fill="#2D2926"/>
+</svg>
