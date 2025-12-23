@@ -1,0 +1,72 @@
+# Android Studio / IntelliJ IDEA
+*.iml
+.idea/
+.gradle/
+local.properties
+
+# Build outputs
+build/
+app/build/
+*/build/
+
+# Generated files
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Signing keys (NEVER commit these!)
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# Google Services (contains API keys)
+google-services.json
+
+# Environment / Secrets
+.env
+.env.local
+*.env
+secrets.properties
+
+# OS generated files
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test outputs
+app/test-results/
+app/reports/
+
+# Kotlin
+*.kotlin_module
+
+# Proguard
+proguard/
+
+# Capture
+captures/
+
+# Android Profiler
+*.hprof
+
+# NDK
+obj/
+
+# IntelliJ
+out/
+
+# Firebase
+firebase-debug.log
+.firebaserc
+
+# Sarvam AI / API Keys
+sarvam-credentials.json
+api-keys.properties
