@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.PregnantWoman
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaShapes
 import com.maa.health.ui.theme.MaaSpacing
@@ -62,7 +66,9 @@ import com.maa.health.ui.theme.MaaTypography
 fun LearnHubScreen(
     onNavigateToArticle: (String) -> Unit,
     onNavigateToVideos: () -> Unit,
-    onNavigateToSearch: () -> Unit
+    onNavigateToSearch: () -> Unit,
+    voiceService: VoiceService? = null,
+    onVoiceSearch: ((String) -> Unit)? = null
 ) {
     val categories = listOf(
         LearnCategory(
@@ -111,11 +117,14 @@ fun LearnHubScreen(
         )
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         TopAppBar(
             title = {
                 Column {
@@ -163,10 +172,28 @@ fun LearnHubScreen(
                 )
             }
 
-            // Bottom spacing
+            // Bottom spacing for FAB
             item {
-                Spacer(modifier = Modifier.height(MaaSpacing.extraLarge))
+                Spacer(modifier = Modifier.height(80.dp))
             }
+        }
+        }
+
+        // Voice FAB for search
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.SEARCH,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceSearch?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceSearch?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }

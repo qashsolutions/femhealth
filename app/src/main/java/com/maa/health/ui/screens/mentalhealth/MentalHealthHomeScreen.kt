@@ -54,6 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.maa.health.data.model.Mood
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.components.MaaButton
 import com.maa.health.ui.components.MaaButtonStyle
 import com.maa.health.ui.theme.MaaColors
@@ -77,16 +80,21 @@ import kotlinx.coroutines.delay
 fun MentalHealthHomeScreen(
     onBack: () -> Unit,
     onCrisisSupport: () -> Unit,
-    viewModel: MentalHealthViewModel = hiltViewModel()
+    viewModel: MentalHealthViewModel = hiltViewModel(),
+    voiceService: VoiceService? = null,
+    onVoiceMoodInput: ((String) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         TopAppBar(
             title = {
                 Text(
@@ -192,7 +200,25 @@ fun MentalHealthHomeScreen(
             // Crisis support reminder
             CrisisSupportCard(onTap = onCrisisSupport)
 
-            Spacer(modifier = Modifier.height(MaaSpacing.large))
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+        }
+
+        // Voice FAB for mood input
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.LOG_MOOD,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceMoodInput?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceMoodInput?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }

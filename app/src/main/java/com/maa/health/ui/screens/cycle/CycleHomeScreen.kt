@@ -51,6 +51,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.maa.health.data.model.FlowIntensity
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.components.MaaButton
 import com.maa.health.ui.components.MaaButtonStyle
 import com.maa.health.ui.theme.MaaColors
@@ -77,16 +80,21 @@ import java.util.Locale
 @Composable
 fun CycleHomeScreen(
     onBack: () -> Unit,
-    viewModel: CycleViewModel = hiltViewModel()
+    viewModel: CycleViewModel = hiltViewModel(),
+    voiceService: VoiceService? = null,
+    onVoiceInput: ((String) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         TopAppBar(
             title = {
                 Text(
@@ -170,7 +178,25 @@ fun CycleHomeScreen(
             // Legend
             CalendarLegend()
 
-            Spacer(modifier = Modifier.height(MaaSpacing.large))
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+        }
+
+        // Voice FAB for cycle notes
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.LOG_CYCLE,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }

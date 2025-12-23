@@ -61,6 +61,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaShapes
 import com.maa.health.ui.theme.MaaSpacing
@@ -96,17 +99,22 @@ fun YouHubScreen(
     onNavigateToPrivacy: () -> Unit,
     onNavigateToHelp: () -> Unit,
     onNavigateToPremium: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    voiceService: VoiceService? = null,
+    onVoiceSearch: ((String) -> Unit)? = null
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var cloudSyncEnabled by remember { mutableStateOf(false) }
     var biometricEnabled by remember { mutableStateOf(false) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         TopAppBar(
             title = {
                 Text(
@@ -306,10 +314,28 @@ fun YouHubScreen(
                 }
             }
 
-            // Bottom spacing
+            // Bottom spacing for FAB
             item {
-                Spacer(modifier = Modifier.height(MaaSpacing.extraLarge))
+                Spacer(modifier = Modifier.height(80.dp))
             }
+        }
+        }
+
+        // Voice FAB for search
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.SEARCH,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceSearch?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceSearch?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }

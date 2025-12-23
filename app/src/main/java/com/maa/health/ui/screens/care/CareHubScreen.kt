@@ -43,6 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaShapes
 import com.maa.health.ui.theme.MaaSpacing
@@ -66,7 +69,9 @@ fun CareHubScreen(
     onNavigateToVaccinations: () -> Unit,
     onNavigateToMedications: () -> Unit,
     onNavigateToAppointments: () -> Unit,
-    onAddChild: () -> Unit
+    onAddChild: () -> Unit,
+    voiceService: VoiceService? = null,
+    onVoiceInput: ((String) -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -277,19 +282,36 @@ fun CareHubScreen(
             }
         }
 
-        // FAB for adding new item
-        FloatingActionButton(
-            onClick = onAddChild,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(MaaSpacing.large),
-            containerColor = MaaColors.accent,
-            contentColor = MaaColors.onAccent
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add child or reminder"
+        // Voice FAB
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.SEARCH,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
             )
+        } ?: run {
+            // FAB for adding new item (shown when voice service not available)
+            FloatingActionButton(
+                onClick = onAddChild,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large),
+                containerColor = MaaColors.accent,
+                contentColor = MaaColors.onAccent
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add child or reminder"
+                )
+            }
         }
     }
 }

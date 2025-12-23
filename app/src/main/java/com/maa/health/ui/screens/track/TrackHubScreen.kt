@@ -2,6 +2,7 @@ package com.maa.health.ui.screens.track
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +41,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaShapes
 import com.maa.health.ui.theme.MaaSpacing
@@ -49,6 +57,7 @@ import com.maa.health.ui.theme.MaaTypography
  * - Cycle tracking entry point
  * - Mood logging
  * - Recent logs summary
+ * - Voice-first input via FAB
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,9 +65,13 @@ fun TrackHubScreen(
     onNavigateToBodyMap: () -> Unit,
     onNavigateToCycle: () -> Unit,
     onNavigateToMood: () -> Unit,
-    onNavigateToSymptomHistory: () -> Unit
+    onNavigateToSymptomHistory: () -> Unit,
+    voiceService: VoiceService? = null,
+    onVoiceInput: ((String) -> Unit)? = null
 ) {
-    Column(
+    var showVoiceHint by remember { mutableStateOf(true) }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
@@ -208,6 +221,24 @@ fun TrackHubScreen(
                     }
                 }
             }
+        }
+
+        // Voice FAB
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.LOG_SYMPTOM,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    // Allow user to edit before submitting
+                    onVoiceInput?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }

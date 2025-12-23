@@ -61,6 +61,9 @@ import com.maa.health.data.model.Severity
 import com.maa.health.data.model.SymptomType
 import com.maa.health.data.model.TriageResult
 import com.maa.health.data.model.Urgency
+import com.maa.health.service.VoiceAction
+import com.maa.health.service.VoiceService
+import com.maa.health.ui.components.FloatingVoiceFAB
 import com.maa.health.ui.components.MaaButton
 import com.maa.health.ui.components.MaaButtonStyle
 import com.maa.health.ui.theme.MaaColors
@@ -83,16 +86,21 @@ import com.maa.health.ui.theme.MaaTypography
 fun SymptomTriageScreen(
     onBack: () -> Unit,
     onEmergency: () -> Unit,
-    viewModel: SymptomTriageViewModel = hiltViewModel()
+    viewModel: SymptomTriageViewModel = hiltViewModel(),
+    voiceService: VoiceService? = null,
+    onVoiceInput: ((String) -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaaColors.background)
     ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
         TopAppBar(
             title = {
                 Text(
@@ -200,7 +208,25 @@ fun SymptomTriageScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(MaaSpacing.large))
+            Spacer(modifier = Modifier.height(80.dp))
+        }
+        }
+
+        // Voice FAB for symptom description
+        voiceService?.let { service ->
+            FloatingVoiceFAB(
+                voiceService = service,
+                voiceAction = VoiceAction.LOG_SYMPTOM,
+                onTranscriptionConfirmed = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                onEditRequested = { text ->
+                    onVoiceInput?.invoke(text)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(MaaSpacing.large)
+            )
         }
     }
 }
