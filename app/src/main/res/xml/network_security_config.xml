@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!-- Disable cleartext traffic globally for security -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Certificate pinning for API endpoints -->
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">api.sarvam.ai</domain>
         <domain includeSubdomains="true">firestore.googleapis.com</domain>
         <domain includeSubdomains="true">firebase.googleapis.com</domain>
+        <domain includeSubdomains="true">storage.googleapis.com</domain>
     </domain-config>
 </network-security-config>
