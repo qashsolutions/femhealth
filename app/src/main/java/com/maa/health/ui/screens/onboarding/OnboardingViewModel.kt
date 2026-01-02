@@ -3,6 +3,7 @@ package com.maa.health.ui.screens.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maa.health.data.model.LifecycleStage
+import com.maa.health.data.model.SupportedCountry
 import com.maa.health.data.model.SupportedLanguage
 import com.maa.health.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,10 +60,15 @@ class OnboardingViewModel @Inject constructor(
         _uiState.update { it.copy(phoneNumber = phone) }
     }
 
+    fun setSelectedCountry(country: SupportedCountry) {
+        _uiState.update { it.copy(selectedCountry = country) }
+    }
+
     fun sendOtp() {
         val phone = _uiState.value.phoneNumber
-        if (phone.length != 10) {
-            _uiState.update { it.copy(phoneError = "Please enter a valid 10-digit number") }
+        // Flexible validation: minimum 6 digits for international numbers
+        if (phone.length < 6) {
+            _uiState.update { it.copy(phoneError = "Please enter a valid phone number") }
             return
         }
 
@@ -145,11 +151,13 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, profileError = null) }
             try {
+                val country = _uiState.value.selectedCountry
+                val fullPhoneNumber = "${country.dialCode}${_uiState.value.phoneNumber}"
                 userRepository.createUser(
-                    phoneNumber = "+91${_uiState.value.phoneNumber}",
+                    phoneNumber = fullPhoneNumber,
                     name = _uiState.value.profileName.takeIf { it.isNotBlank() },
                     age = age,
-                    pincode = _uiState.value.profilePincode.takeIf { it.length == 6 }
+                    pincode = _uiState.value.profilePincode.takeIf { it.isNotBlank() }
                 )
                 _uiState.update { it.copy(isLoading = false, profileSaved = true) }
             } catch (e: Exception) {
@@ -215,6 +223,7 @@ data class OnboardingUiState(
 
     // Phone Auth
     val phoneNumber: String = "",
+    val selectedCountry: SupportedCountry = SupportedCountry.getDefault(),
     val phoneError: String? = null,
     val otpSent: Boolean = false,
     val otp: String = "",

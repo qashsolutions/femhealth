@@ -23,8 +23,9 @@ android {
             useSupportLibrary = true
         }
 
-        // Build config fields for API keys (to be configured)
+        // Build config fields for API keys (to be configured in local.properties)
         buildConfigField("String", "SARVAM_API_KEY", "\"${project.findProperty("SARVAM_API_KEY") ?: ""}\"")
+        buildConfigField("String", "GOOGLE_TRANSLATE_API_KEY", "\"${project.findProperty("GOOGLE_TRANSLATE_API_KEY") ?: ""}\"")
     }
 
     buildTypes {

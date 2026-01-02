@@ -4,9 +4,14 @@
 # Android SDK location (set automatically by Android Studio)
 # sdk.dir=/path/to/android/sdk
 
-# Sarvam AI API Key (for speech-to-text, text-to-speech, translation)
+# Sarvam AI API Key (for speech-to-text, text-to-speech in Indian languages)
 # Get your key at: https://sarvam.ai
 SARVAM_API_KEY=your_sarvam_api_key_here
+
+# Google Cloud Translation API Key (for non-Indian languages - Africa, other South Asia)
+# Get your key at: https://console.cloud.google.com/apis/credentials
+# Enable "Cloud Translation API" in Google Cloud Console
+GOOGLE_TRANSLATE_API_KEY=your_google_translate_api_key_here
 
 # MedGemma API Key (for AI symptom triage) - Optional
 # MEDGEMMA_API_KEY=your_medgemma_api_key_here

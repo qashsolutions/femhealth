@@ -13,6 +13,7 @@ sealed class Screen(val route: String) {
 
     data object Splash : Screen("splash")
     data object LanguageSelection : Screen("onboarding/language")
+    data object Auth : Screen("onboarding/auth")  // Primary auth screen (Face ID or Phone OTP)
     data object PhoneAuth : Screen("onboarding/phone_auth")
     data object OtpVerification : Screen("onboarding/otp/{phoneNumber}") {
         fun createRoute(phoneNumber: String) = "onboarding/otp/$phoneNumber"

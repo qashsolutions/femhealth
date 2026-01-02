@@ -2,13 +2,10 @@ package com.maa.health.ui.screens.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,18 +27,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import com.maa.health.ui.components.MaaButton
 import com.maa.health.ui.components.MaaButtonSize
+import com.maa.health.ui.components.MaaButtonVariant
 import com.maa.health.ui.components.MaaTextField
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaSpacing
 import com.maa.health.ui.theme.MaaTypography
 
 /**
- * Profile setup screen
+ * Simplified Profile setup screen
  *
- * Collects basic user information:
- * - Name (optional)
- * - Age/Date of birth
- * - Location (for facility finder)
+ * Minimal friction signup - all fields are optional:
+ * - Name (optional) - for personalization
+ * - Age (optional) - for relevant health content
+ *
+ * Users can complete this later in settings.
+ * App is free, so we minimize signup friction.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,15 +51,13 @@ fun ProfileSetupScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
-    var pincode by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
-    // Validation
+    // Validation - age is optional but must be valid if provided
     val ageInt = age.toIntOrNull()
-    val isAgeValid = ageInt != null && ageInt in 10..100
-    val isPincodeValid = pincode.isEmpty() || pincode.length == 6
+    val isAgeValid = age.isEmpty() || (ageInt != null && ageInt in 10..100)
 
     Column(
         modifier = Modifier
@@ -92,7 +90,7 @@ fun ProfileSetupScreen(
 
             // Header
             Text(
-                text = "Tell Us About Yourself",
+                text = "Almost There!",
                 style = MaaTypography.headlineMedium,
                 color = MaaColors.textPrimary
             )
@@ -100,7 +98,7 @@ fun ProfileSetupScreen(
             Spacer(modifier = Modifier.height(MaaSpacing.small))
 
             Text(
-                text = "This helps us personalize your health guidance",
+                text = "Just a couple of optional details to personalize your experience",
                 style = MaaTypography.bodyMedium,
                 color = MaaColors.textSecondary
             )
@@ -111,9 +109,9 @@ fun ProfileSetupScreen(
             MaaTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = "Name (optional)",
+                label = "Your Name (optional)",
                 placeholder = "How should we address you?",
-                helperText = "You can skip this if you prefer privacy",
+                helperText = "Used for personalized greetings",
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 )
@@ -121,7 +119,7 @@ fun ProfileSetupScreen(
 
             Spacer(modifier = Modifier.height(MaaSpacing.large))
 
-            // Age field
+            // Age field (optional)
             MaaTextField(
                 value = age,
                 onValueChange = { newValue ->
@@ -129,30 +127,10 @@ fun ProfileSetupScreen(
                         age = newValue
                     }
                 },
-                label = "Your Age",
+                label = "Your Age (optional)",
                 placeholder = "Enter your age",
-                helperText = "This helps us show relevant health content for your life stage",
+                helperText = "Helps show relevant health content for your life stage",
                 errorText = if (age.isNotEmpty() && !isAgeValid) "Please enter a valid age (10-100)" else null,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
-                )
-            )
-
-            Spacer(modifier = Modifier.height(MaaSpacing.large))
-
-            // Pincode field (optional)
-            MaaTextField(
-                value = pincode,
-                onValueChange = { newValue ->
-                    if (newValue.isEmpty() || (newValue.all { it.isDigit() } && newValue.length <= 6)) {
-                        pincode = newValue
-                    }
-                },
-                label = "Pincode (optional)",
-                placeholder = "Your area pincode",
-                helperText = "Used to find nearby health facilities",
-                errorText = if (pincode.isNotEmpty() && !isPincodeValid) "Pincode must be 6 digits" else null,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
@@ -163,7 +141,7 @@ fun ProfileSetupScreen(
 
             // Privacy note
             Text(
-                text = "Your information is stored securely on your device and never shared without your consent.",
+                text = "Your information is stored securely on your device. You can update this anytime in Settings.",
                 style = MaaTypography.bodySmall,
                 color = MaaColors.textTertiary
             )
@@ -173,16 +151,17 @@ fun ProfileSetupScreen(
 
             // Continue button
             MaaButton(
-                text = "Continue",
+                text = if (name.isNotEmpty() || age.isNotEmpty()) "Continue" else "Skip for Now",
                 onClick = {
                     isLoading = true
                     // TODO: Save profile to DataStore
                     onProfileComplete()
                 },
-                enabled = isAgeValid && isPincodeValid && !isLoading,
+                enabled = isAgeValid && !isLoading,
                 loading = isLoading,
                 fullWidth = true,
-                size = MaaButtonSize.LARGE
+                size = MaaButtonSize.LARGE,
+                variant = if (name.isNotEmpty() || age.isNotEmpty()) MaaButtonVariant.PRIMARY else MaaButtonVariant.SECONDARY
             )
 
             Spacer(modifier = Modifier.height(MaaSpacing.large))

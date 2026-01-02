@@ -8,15 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.maa.health.auth.BiometricAuthManager
 import com.maa.health.navigation.MaaNavHost
 import com.maa.health.navigation.Screen
 import com.maa.health.ui.components.MaaBottomNavBar
@@ -30,7 +28,9 @@ import com.maa.health.ui.components.NavItem
  * - Content area for navigation host
  */
 @Composable
-fun MaaApp() {
+fun MaaApp(
+    biometricAuthManager: BiometricAuthManager
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: ""
@@ -57,10 +57,11 @@ fun MaaApp() {
         currentRoute in listOf(
             Screen.Splash.route,
             Screen.LanguageSelection.route,
+            Screen.Auth.route,
             Screen.PhoneAuth.route,
             Screen.ProfileSetup.route,
             Screen.LifecycleStageSelection.route
-        ) || currentRoute.startsWith("otp_verification")
+        ) || currentRoute.startsWith("otp_verification") || currentRoute.startsWith("onboarding/otp")
     }
 
     Scaffold(
@@ -97,6 +98,7 @@ fun MaaApp() {
         ) {
             MaaNavHost(
                 navController = navController,
+                biometricAuthManager = biometricAuthManager,
                 startDestination = Screen.Splash.route
             )
         }
