@@ -72,11 +72,9 @@ class CloudSyncService @Inject constructor(
 
     /**
      * Check if user has premium subscription
+     * All features are now free for all users
      */
-    suspend fun isPremiumUser(): Boolean {
-        val prefs = userPreferencesDataStore.getUserPreferences().first()
-        return prefs.isPremium
-    }
+    suspend fun isPremiumUser(): Boolean = true
 
     /**
      * Get current authenticated user ID
@@ -84,13 +82,9 @@ class CloudSyncService @Inject constructor(
     fun getCurrentUserId(): String? = auth.currentUser?.uid
 
     /**
-     * Sync all data to cloud (premium only)
+     * Sync all data to cloud (now free for all users)
      */
     suspend fun syncToCloud(): SyncResult = withContext(Dispatchers.IO) {
-        if (!isPremiumUser()) {
-            return@withContext SyncResult.Error("Cloud sync is a premium feature")
-        }
-
         val userId = getCurrentUserId()
             ?: return@withContext SyncResult.Error("User not authenticated")
 
@@ -136,13 +130,9 @@ class CloudSyncService @Inject constructor(
     }
 
     /**
-     * Restore data from cloud
+     * Restore data from cloud (now free for all users)
      */
     suspend fun restoreFromCloud(): SyncResult = withContext(Dispatchers.IO) {
-        if (!isPremiumUser()) {
-            return@withContext SyncResult.Error("Cloud sync is a premium feature")
-        }
-
         val userId = getCurrentUserId()
             ?: return@withContext SyncResult.Error("User not authenticated")
 

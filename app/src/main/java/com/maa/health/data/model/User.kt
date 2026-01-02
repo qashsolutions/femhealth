@@ -32,16 +32,10 @@ enum class LifecycleStage {
 }
 
 /**
- * Subscription status
+ * Subscription status - App is now free for all users
  */
 enum class SubscriptionStatus {
-    FREE,
-    TRIAL,
-    PREMIUM_MONTHLY,
-    PREMIUM_YEARLY,
-    FAMILY_MONTHLY,
-    FAMILY_YEARLY,
-    EXPIRED
+    FREE  // All features are now free
 }
 
 /**

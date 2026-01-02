@@ -25,7 +25,6 @@ android {
 
         // Build config fields for API keys (to be configured)
         buildConfigField("String", "SARVAM_API_KEY", "\"${project.findProperty("SARVAM_API_KEY") ?: ""}\"")
-        buildConfigField("String", "RAZORPAY_KEY_ID", "\"${project.findProperty("RAZORPAY_KEY_ID") ?: ""}\"")
     }
 
     buildTypes {
@@ -125,9 +124,6 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.hilt:hilt-work:1.1.0")
     ksp("androidx.hilt:hilt-compiler:1.1.0")
-
-    // Razorpay
-    implementation("com.razorpay:checkout:1.6.33")
 
     // Date/Time
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")

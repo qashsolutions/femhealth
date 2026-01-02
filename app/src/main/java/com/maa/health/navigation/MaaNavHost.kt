@@ -264,9 +264,6 @@ fun MaaNavHost(
                 onNavigateToHelp = {
                     navController.navigate(Screen.HelpSupport.route)
                 },
-                onNavigateToPremium = {
-                    navController.navigate(Screen.Subscription.route)
-                },
                 onLogout = {
                     navController.navigate(Screen.LanguageSelection.route) {
                         popUpTo(Screen.Home.route) { inclusive = true }

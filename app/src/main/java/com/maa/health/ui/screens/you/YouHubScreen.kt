@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.CloudSync
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
@@ -33,10 +32,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Workspace
 import androidx.compose.material3.Card
@@ -84,7 +81,6 @@ import com.maa.health.ui.theme.MaaTypography
 fun YouHubScreen(
     userName: String = "User",
     userPhone: String = "+91 98xxx xxxxx",
-    isPremium: Boolean = false,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToLanguage: () -> Unit,
     onNavigateToVoiceSettings: () -> Unit,
@@ -95,9 +91,9 @@ fun YouHubScreen(
     onDeleteAccount: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
     onNavigateToHelp: () -> Unit,
-    onNavigateToPremium: () -> Unit,
     onLogout: () -> Unit
 ) {
+    // All features are now free for all users
     var notificationsEnabled by remember { mutableStateOf(true) }
     var cloudSyncEnabled by remember { mutableStateOf(false) }
     var biometricEnabled by remember { mutableStateOf(false) }
@@ -130,17 +126,8 @@ fun YouHubScreen(
                 ProfileCard(
                     userName = userName,
                     userPhone = userPhone,
-                    isPremium = isPremium,
-                    onEdit = onNavigateToEditProfile,
-                    onUpgrade = onNavigateToPremium
+                    onEdit = onNavigateToEditProfile
                 )
-            }
-
-            // Premium banner (if not premium)
-            if (!isPremium) {
-                item {
-                    PremiumBanner(onClick = onNavigateToPremium)
-                }
             }
 
             // Language & Voice section
@@ -198,17 +185,9 @@ fun YouHubScreen(
                         icon = Icons.Default.CloudSync,
                         iconColor = MaaColors.info,
                         title = "Cloud Sync",
-                        subtitle = if (isPremium) "Auto-backup enabled" else "Premium feature",
-                        checked = cloudSyncEnabled && isPremium,
-                        onCheckedChange = {
-                            if (isPremium) {
-                                cloudSyncEnabled = it
-                            } else {
-                                onNavigateToPremium()
-                            }
-                        },
-                        enabled = isPremium,
-                        showPremiumBadge = !isPremium
+                        subtitle = "Auto-backup enabled",
+                        checked = cloudSyncEnabled,
+                        onCheckedChange = { cloudSyncEnabled = it }
                     )
                     SettingsItem(
                         icon = Icons.Default.Storage,
@@ -318,9 +297,7 @@ fun YouHubScreen(
 private fun ProfileCard(
     userName: String,
     userPhone: String,
-    isPremium: Boolean,
-    onEdit: () -> Unit,
-    onUpgrade: () -> Unit
+    onEdit: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -352,34 +329,16 @@ private fun ProfileCard(
             Spacer(modifier = Modifier.width(MaaSpacing.medium))
 
             Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = userName,
-                        style = MaaTypography.titleMedium,
-                        color = MaaColors.textPrimary
-                    )
-                    if (isPremium) {
-                        Spacer(modifier = Modifier.width(MaaSpacing.small))
-                        Icon(
-                            imageVector = Icons.Default.Verified,
-                            contentDescription = "Premium",
-                            tint = MaaColors.accent,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
+                Text(
+                    text = userName,
+                    style = MaaTypography.titleMedium,
+                    color = MaaColors.textPrimary
+                )
                 Text(
                     text = userPhone,
                     style = MaaTypography.bodySmall,
                     color = MaaColors.textSecondary
                 )
-                if (isPremium) {
-                    Text(
-                        text = "Premium Member",
-                        style = MaaTypography.labelSmall,
-                        color = MaaColors.accent
-                    )
-                }
             }
 
             IconButton(onClick = onEdit) {
@@ -389,61 +348,6 @@ private fun ProfileCard(
                     tint = MaaColors.textSecondary
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun PremiumBanner(onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaaColors.accent.copy(alpha = 0.1f)
-        ),
-        shape = MaaShapes.medium
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaaSpacing.medium),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(MaaColors.accent.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
-                    tint = MaaColors.accent,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(MaaSpacing.medium))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Upgrade to Premium",
-                    style = MaaTypography.titleSmall,
-                    color = MaaColors.textPrimary
-                )
-                Text(
-                    text = "Cloud sync, AI insights & more",
-                    style = MaaTypography.bodySmall,
-                    color = MaaColors.textSecondary
-                )
-            }
-
-            Icon(
-                imageVector = Icons.Default.CloudUpload,
-                contentDescription = null,
-                tint = MaaColors.accent
-            )
         }
     }
 }
@@ -543,9 +447,7 @@ private fun SettingsToggleItem(
     title: String,
     subtitle: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    enabled: Boolean = true,
-    showPremiumBadge: Boolean = false
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -571,28 +473,11 @@ private fun SettingsToggleItem(
         Spacer(modifier = Modifier.width(MaaSpacing.medium))
 
         Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = title,
-                    style = MaaTypography.labelLarge,
-                    color = MaaColors.textPrimary
-                )
-                if (showPremiumBadge) {
-                    Spacer(modifier = Modifier.width(MaaSpacing.small))
-                    Box(
-                        modifier = Modifier
-                            .clip(MaaShapes.small)
-                            .background(MaaColors.accent.copy(alpha = 0.1f))
-                            .padding(horizontal = MaaSpacing.small, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = "Premium",
-                            style = MaaTypography.labelSmall,
-                            color = MaaColors.accent
-                        )
-                    }
-                }
-            }
+            Text(
+                text = title,
+                style = MaaTypography.labelLarge,
+                color = MaaColors.textPrimary
+            )
             Text(
                 text = subtitle,
                 style = MaaTypography.bodySmall,
@@ -603,7 +488,6 @@ private fun SettingsToggleItem(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            enabled = enabled,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaaColors.surface,
                 checkedTrackColor = MaaColors.accent,

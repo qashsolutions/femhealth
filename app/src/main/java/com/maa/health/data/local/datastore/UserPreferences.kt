@@ -86,7 +86,7 @@ class UserPreferences @Inject constructor(
     // Individual preference flows
     val isLoggedIn: Flow<Boolean> = dataStore.data.map { it[Keys.IS_LOGGED_IN] ?: false }
     val languageCode: Flow<String> = dataStore.data.map { it[Keys.LANGUAGE_CODE] ?: SupportedLanguage.HINDI.code }
-    val isPremium: Flow<Boolean> = dataStore.data.map { it[Keys.IS_PREMIUM] ?: false }
+    val isPremium: Flow<Boolean> = dataStore.data.map { true }  // All features are now free
     val onboardingCompleted: Flow<Boolean> = dataStore.data.map { it[Keys.ONBOARDING_COMPLETED] ?: false }
 
     // Update functions
@@ -211,26 +211,15 @@ data class UserPreferencesData(
     val pinEnabled: Boolean = false,
     val notificationsEnabled: Boolean = true,
     val offlineContentEnabled: Boolean = false,
-    val isPremium: Boolean = false,
+    val isPremium: Boolean = true,  // All features are now free for everyone
     val isOnboardingComplete: Boolean = false,
     val lastSyncTime: Long = 0L,
     val voiceMinutesUsed: Int = 0,
     val freeScreeningsUsed: Int = 0,
     val freeTriagesUsed: Int = 0
 ) {
-    // Free tier limits
-    companion object {
-        const val FREE_VOICE_MINUTES_LIMIT = 5
-        const val FREE_SCREENINGS_LIMIT = 1
-        const val FREE_TRIAGES_LIMIT = 3
-    }
-
-    val canUseVoice: Boolean
-        get() = isPremium || voiceMinutesUsed < FREE_VOICE_MINUTES_LIMIT
-
-    val canUseScreening: Boolean
-        get() = isPremium || freeScreeningsUsed < FREE_SCREENINGS_LIMIT
-
-    val canUseTriage: Boolean
-        get() = isPremium || freeTriagesUsed < FREE_TRIAGES_LIMIT
+    // All features are now free - no limits
+    val canUseVoice: Boolean = true
+    val canUseScreening: Boolean = true
+    val canUseTriage: Boolean = true
 }
