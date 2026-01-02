@@ -1,0 +1,12 @@
+# Local properties template - Copy this to local.properties and fill in values
+# DO NOT COMMIT local.properties - it contains sensitive API keys
+
+# Android SDK location (set automatically by Android Studio)
+# sdk.dir=/path/to/android/sdk
+
+# Sarvam AI API Key (for speech-to-text, text-to-speech, translation)
+# Get your key at: https://sarvam.ai
+SARVAM_API_KEY=your_sarvam_api_key_here
+
+# MedGemma API Key (for AI symptom triage) - Optional
+# MEDGEMMA_API_KEY=your_medgemma_api_key_here
