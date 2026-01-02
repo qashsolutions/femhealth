@@ -4,9 +4,20 @@
 # Android SDK location (set automatically by Android Studio)
 # sdk.dir=/path/to/android/sdk
 
-# Sarvam AI API Key (for speech-to-text, text-to-speech, translation)
+# ============================================
+# API Keys (Required)
+# ============================================
+
+# Sarvam AI - Speech-to-text, Text-to-speech, Translation (22 Indian languages)
 # Get your key at: https://sarvam.ai
 SARVAM_API_KEY=your_sarvam_api_key_here
 
-# MedGemma API Key (for AI symptom triage) - Optional
-# MEDGEMMA_API_KEY=your_medgemma_api_key_here
+# MedGemma - AI Medical Symptom Analysis (Required for symptom triage)
+# Get your key at: https://cloud.google.com/vertex-ai (or your MedGemma provider)
+MEDGEMMA_API_KEY=your_medgemma_api_key_here
+
+# ============================================
+# Firebase Configuration
+# ============================================
+# Place google-services.json in the app/ folder
+# Get it from: https://console.firebase.google.com

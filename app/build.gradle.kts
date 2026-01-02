@@ -23,8 +23,9 @@ android {
             useSupportLibrary = true
         }
 
-        // Build config fields for API keys (to be configured)
+        // Build config fields for API keys (stored in local.properties)
         buildConfigField("String", "SARVAM_API_KEY", "\"${project.findProperty("SARVAM_API_KEY") ?: ""}\"")
+        buildConfigField("String", "MEDGEMMA_API_KEY", "\"${project.findProperty("MEDGEMMA_API_KEY") ?: ""}\"")
     }
 
     buildTypes {

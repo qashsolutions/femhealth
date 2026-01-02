@@ -57,8 +57,9 @@ captures/
 .externalNativeBuild/
 .cxx/
 
-# Google Services (contains project config - be careful)
-# google-services.json
+# Google Services (contains Firebase config - NEVER COMMIT)
+google-services.json
+app/google-services.json
 
 # Version control
 vcs.xml
