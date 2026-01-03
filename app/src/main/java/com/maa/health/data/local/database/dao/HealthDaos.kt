@@ -19,6 +19,9 @@ interface CycleDao {
     @Query("SELECT * FROM cycle_logs WHERE id = :id")
     suspend fun getCycleById(id: String): CycleLogEntity?
 
+    @Query("SELECT COUNT(*) FROM cycle_logs")
+    suspend fun getCycleLogCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCycleLog(cycleLog: CycleLogEntity)
 
@@ -49,6 +52,9 @@ interface MoodDao {
 
     @Query("SELECT * FROM mood_logs WHERE userId = :userId ORDER BY timestamp DESC LIMIT :limit")
     suspend fun getRecentMoodLogs(userId: String, limit: Int): List<MoodLogEntity>
+
+    @Query("SELECT COUNT(*) FROM mood_logs")
+    suspend fun getMoodLogCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMoodLog(moodLog: MoodLogEntity)
@@ -83,6 +89,9 @@ interface SymptomDao {
 
     @Query("SELECT * FROM symptom_logs WHERE pregnancyId = :pregnancyId ORDER BY timestamp DESC")
     fun getPregnancySymptomLogs(pregnancyId: String): Flow<List<SymptomLogEntity>>
+
+    @Query("SELECT COUNT(*) FROM symptom_logs")
+    suspend fun getSymptomLogCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSymptomLog(symptomLog: SymptomLogEntity)
@@ -127,6 +136,9 @@ interface ChildDao {
 
     @Query("SELECT * FROM children WHERE id = :id")
     suspend fun getChildById(id: String): ChildEntity?
+
+    @Query("SELECT COUNT(*) FROM children")
+    suspend fun getChildCount(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChild(child: ChildEntity)

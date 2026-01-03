@@ -200,6 +200,7 @@ sealed class Screen(val route: String) {
     data object FamilySharing : Screen("settings/family")
     data object HelpSupport : Screen("settings/help")
     data object About : Screen("settings/about")
+    data object AccountDeletion : Screen("settings/delete_account")  // Google Play requirement
 
     // ═══════════════════════════════════════════════════════════════════════════
     // EMERGENCY & CRISIS

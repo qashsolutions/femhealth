@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.maa.health.auth.BiometricAuthManager
+import com.maa.health.data.repository.AccountDeletionManager
 import com.maa.health.ui.MaaApp
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaTheme
@@ -33,6 +34,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var biometricAuthManager: BiometricAuthManager
 
+    @Inject
+    lateinit var accountDeletionManager: AccountDeletionManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle splash screen
         installSplashScreen()
@@ -48,7 +52,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaaColors.background
                 ) {
-                    MaaApp(biometricAuthManager = biometricAuthManager)
+                    MaaApp(
+                        biometricAuthManager = biometricAuthManager,
+                        accountDeletionManager = accountDeletionManager
+                    )
                 }
             }
         }

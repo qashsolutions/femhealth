@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.maa.health"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.maa.health"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
 
@@ -120,6 +120,11 @@ dependencies {
 
     // Biometric
     implementation("androidx.biometric:biometric:1.1.0")
+
+    // Security - Encrypted Storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("net.zetetic:android-database-sqlcipher:4.5.4")
+    implementation("androidx.sqlite:sqlite-ktx:2.4.0")
 
     // WorkManager - Background Sync
     implementation("androidx.work:work-runtime-ktx:2.9.0")

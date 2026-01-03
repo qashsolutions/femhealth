@@ -15,6 +15,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.maa.health.auth.BiometricAuthManager
+import com.maa.health.data.repository.AccountDeletionManager
 import com.maa.health.navigation.MaaNavHost
 import com.maa.health.navigation.Screen
 import com.maa.health.ui.components.MaaBottomNavBar
@@ -29,7 +30,8 @@ import com.maa.health.ui.components.NavItem
  */
 @Composable
 fun MaaApp(
-    biometricAuthManager: BiometricAuthManager
+    biometricAuthManager: BiometricAuthManager,
+    accountDeletionManager: AccountDeletionManager
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -99,6 +101,7 @@ fun MaaApp(
             MaaNavHost(
                 navController = navController,
                 biometricAuthManager = biometricAuthManager,
+                accountDeletionManager = accountDeletionManager,
                 startDestination = Screen.Splash.route
             )
         }

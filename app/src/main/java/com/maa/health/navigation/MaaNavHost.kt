@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.maa.health.auth.BiometricAuthManager
+import com.maa.health.data.repository.AccountDeletionManager
 import com.maa.health.ui.screens.care.CareHubScreen
 import com.maa.health.ui.screens.childcare.ChildCareHomeScreen
 import com.maa.health.ui.screens.cycle.CycleHomeScreen
@@ -32,6 +33,7 @@ import com.maa.health.ui.screens.learn.LearnHubScreen
 import com.maa.health.ui.screens.mentalhealth.MentalHealthHomeScreen
 import com.maa.health.ui.screens.onboarding.AuthScreen
 import com.maa.health.ui.screens.onboarding.LanguageSelectionScreen
+import com.maa.health.ui.screens.settings.AccountDeletionScreen
 import com.maa.health.ui.screens.onboarding.LifecycleStageSelectionScreen
 import com.maa.health.ui.screens.onboarding.OtpVerificationScreen
 import com.maa.health.ui.screens.onboarding.PhoneAuthScreen
@@ -53,6 +55,7 @@ import com.maa.health.ui.screens.you.YouHubScreen
 fun MaaNavHost(
     navController: NavHostController,
     biometricAuthManager: BiometricAuthManager,
+    accountDeletionManager: AccountDeletionManager,
     startDestination: String = Screen.Splash.route,
     innerPadding: PaddingValues = PaddingValues()
 ) {
@@ -281,7 +284,7 @@ fun MaaNavHost(
                     // TODO: Trigger cloud sync
                 },
                 onDeleteAccount = {
-                    // TODO: Delete account confirmation
+                    navController.navigate(Screen.AccountDeletion.route)
                 },
                 onNavigateToPrivacy = {
                     navController.navigate(Screen.PrivacySettings.route)
@@ -325,6 +328,19 @@ fun MaaNavHost(
                 onLogout = {
                     navController.navigate(Screen.LanguageSelection.route) {
                         popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.AccountDeletion.route) {
+            AccountDeletionScreen(
+                accountDeletionManager = accountDeletionManager,
+                onBack = { navController.popBackStack() },
+                onAccountDeleted = {
+                    // Clear all navigation and return to language selection
+                    navController.navigate(Screen.LanguageSelection.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
