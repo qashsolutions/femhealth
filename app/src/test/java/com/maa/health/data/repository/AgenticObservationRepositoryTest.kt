@@ -9,6 +9,7 @@ import com.maa.health.data.remote.ai.GeminiObservationService
 import com.maa.health.data.remote.ai.MoodPatternData
 import com.maa.health.data.remote.ai.ObservationType
 import com.maa.health.data.remote.ai.PatternObservation
+import com.maa.health.data.remote.ai.PersonalizedObservation
 import com.maa.health.data.remote.medical.MedlinePlusService
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
@@ -72,7 +73,7 @@ class AgenticObservationRepositoryTest {
         // When
         repository.recordInteraction(
             userId = userId,
-            interactionType = interactionType,
+            type = interactionType,
             targetId = targetId,
             targetType = "symptom",
             metadata = mapOf("severity" to "MODERATE")
@@ -92,18 +93,18 @@ class AgenticObservationRepositoryTest {
     fun `recordInteraction includes timestamp`() = runTest {
         // Given
         val userId = "user-123"
-        val beforeTime = Instant.now().toEpochMilli()
+        val beforeTime = System.currentTimeMillis()
 
         // When
         repository.recordInteraction(
             userId = userId,
-            interactionType = "MOOD_LOG",
+            type = "MOOD_LOG",
             targetId = null,
             targetType = null,
             metadata = null
         )
 
-        val afterTime = Instant.now().toEpochMilli()
+        val afterTime = System.currentTimeMillis()
 
         // Then
         coVerify {
@@ -121,7 +122,7 @@ class AgenticObservationRepositoryTest {
         // When/Then - should not throw
         repository.recordInteraction(
             userId = userId,
-            interactionType = "ARTICLE_VIEW",
+            type = "ARTICLE_VIEW",
             targetId = "article-789",
             targetType = "article",
             metadata = null
@@ -145,6 +146,7 @@ class AgenticObservationRepositoryTest {
             userId = userId,
             contentId = contentId,
             contentType = "OBSERVATION",
+            contentTopic = "mood",
             wasHelpful = true,
             feedbackText = "This was very useful!"
         )
@@ -170,6 +172,7 @@ class AgenticObservationRepositoryTest {
             userId = userId,
             contentId = contentId,
             contentType = "RECOMMENDATION",
+            contentTopic = "nutrition",
             wasHelpful = false,
             feedbackText = "Not relevant to me"
         )
@@ -184,37 +187,34 @@ class AgenticObservationRepositoryTest {
     }
 
     @Test
-    fun `getHelpfulContentHistory returns helpful content only`() = runTest {
+    fun `recordFeedback also records as interaction`() = runTest {
         // Given
         val userId = "user-123"
-        val helpfulContent = listOf(
-            ContentFeedbackEntity(
-                id = "fb-1",
-                userId = userId,
-                contentId = "c-1",
-                contentType = "ARTICLE",
-                contentTopic = "pregnancy",
-                wasHelpful = true,
-                feedbackText = null,
-                timestamp = Instant.now().toEpochMilli()
-            )
-        )
-        coEvery { userInteractionDao.getHelpfulContent(userId, any()) } returns helpfulContent
 
         // When
-        val result = repository.getHelpfulContentHistory(userId)
+        repository.recordFeedback(
+            userId = userId,
+            contentId = "content-1",
+            contentType = "ARTICLE",
+            contentTopic = "pregnancy",
+            wasHelpful = true
+        )
 
-        // Then
-        assertEquals(1, result.size)
-        assertTrue(result.all { it.wasHelpful })
+        // Then - should insert both feedback and interaction
+        coVerify {
+            userInteractionDao.insertFeedback(any())
+            userInteractionDao.insertInteraction(match {
+                it.interactionType == "FEEDBACK_GIVEN"
+            })
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // OBSERVATION GENERATION TESTS
+    // MOOD PATTERN ANALYSIS TESTS
     // ═══════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `getMoodObservation returns observation from Gemini`() = runTest {
+    fun `analyzeMoodPatterns returns observation from Gemini`() = runTest {
         // Given
         val userId = "user-123"
         val mockObservation = PatternObservation(
@@ -225,15 +225,19 @@ class AgenticObservationRepositoryTest {
             suggestsFollowUp = false
         )
 
-        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns emptyList()
+        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns createMockMoodLogs(7)
         coEvery { userRepository.getUserProfile(userId) } returns UserProfileForAI(
             age = 28,
-            lifecycleStage = LifecycleStage.REPRODUCTIVE
+            lifecycleStage = LifecycleStage.REPRODUCTIVE,
+            isPregnant = false,
+            isPostpartum = false,
+            hasChildren = false,
+            preferredLanguage = "en"
         )
         coEvery { geminiService.analyzeMoodPatterns(any()) } returns Result.success(mockObservation)
 
         // When
-        val result = repository.getMoodObservation(userId)
+        val result = repository.analyzeMoodPatterns(userId)
 
         // Then
         assertTrue(result.isSuccess)
@@ -241,7 +245,7 @@ class AgenticObservationRepositoryTest {
     }
 
     @Test
-    fun `getMoodObservation stores observation in history`() = runTest {
+    fun `analyzeMoodPatterns stores observation in history`() = runTest {
         // Given
         val userId = "user-123"
         val mockObservation = PatternObservation(
@@ -252,15 +256,19 @@ class AgenticObservationRepositoryTest {
             suggestsFollowUp = true
         )
 
-        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns emptyList()
+        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns createMockMoodLogs(14)
         coEvery { userRepository.getUserProfile(userId) } returns UserProfileForAI(
             age = 30,
-            lifecycleStage = LifecycleStage.PREGNANCY
+            lifecycleStage = LifecycleStage.PREGNANCY,
+            isPregnant = true,
+            isPostpartum = false,
+            hasChildren = false,
+            preferredLanguage = "en"
         )
         coEvery { geminiService.analyzeMoodPatterns(any()) } returns Result.success(mockObservation)
 
         // When
-        repository.getMoodObservation(userId)
+        repository.analyzeMoodPatterns(userId)
 
         // Then
         coVerify {
@@ -273,136 +281,235 @@ class AgenticObservationRepositoryTest {
     }
 
     @Test
-    fun `getMoodObservation handles API failure gracefully`() = runTest {
+    fun `analyzeMoodPatterns handles insufficient data`() = runTest {
         // Given
         val userId = "user-123"
-        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns emptyList()
+        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns createMockMoodLogs(2) // Only 2 entries
         coEvery { userRepository.getUserProfile(userId) } returns UserProfileForAI(
             age = 25,
-            lifecycleStage = LifecycleStage.REPRODUCTIVE
+            lifecycleStage = LifecycleStage.REPRODUCTIVE,
+            isPregnant = false,
+            isPostpartum = false,
+            hasChildren = false,
+            preferredLanguage = "en"
+        )
+
+        // When
+        val result = repository.analyzeMoodPatterns(userId)
+
+        // Then
+        assertTrue(result.isSuccess)
+        assertTrue(result.getOrNull()?.observation?.contains("Keep tracking") == true)
+    }
+
+    @Test
+    fun `analyzeMoodPatterns handles API failure gracefully`() = runTest {
+        // Given
+        val userId = "user-123"
+        coEvery { moodRepository.getMoodLogsForPeriod(userId, any()) } returns createMockMoodLogs(10)
+        coEvery { userRepository.getUserProfile(userId) } returns UserProfileForAI(
+            age = 25,
+            lifecycleStage = LifecycleStage.REPRODUCTIVE,
+            isPregnant = false,
+            isPostpartum = false,
+            hasChildren = false,
+            preferredLanguage = "en"
         )
         coEvery { geminiService.analyzeMoodPatterns(any()) } returns Result.failure(Exception("API Error"))
 
         // When
-        val result = repository.getMoodObservation(userId)
+        val result = repository.analyzeMoodPatterns(userId)
+
+        // Then
+        assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `analyzeMoodPatterns returns failure when user not found`() = runTest {
+        // Given
+        val userId = "nonexistent-user"
+        coEvery { userRepository.getUserProfile(userId) } returns null
+
+        // When
+        val result = repository.analyzeMoodPatterns(userId)
 
         // Then
         assertTrue(result.isFailure)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // LEARNING & PERSONALIZATION TESTS
+    // PERSONALIZED CONTENT TESTS
     // ═══════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `getInteractionPatterns analyzes user behavior`() = runTest {
+    fun `getPersonalizedContent returns content based on lifecycle stage`() = runTest {
+        // Given
+        val userId = "user-123"
+        coEvery { userRepository.getUserProfile(userId) } returns UserProfileForAI(
+            age = 28,
+            lifecycleStage = LifecycleStage.PREGNANCY,
+            isPregnant = true,
+            isPostpartum = false,
+            hasChildren = false,
+            preferredLanguage = "en"
+        )
+        coEvery { userInteractionDao.getRecentInteractions(userId, any()) } returns emptyList()
+        coEvery { userInteractionDao.getInteractionCounts(userId) } returns emptyList()
+        coEvery { userInteractionDao.getContentTypePreferences(userId) } returns emptyList()
+        coEvery { geminiService.getContentRecommendations(any()) } returns Result.success(emptyList())
+        coEvery { medlinePlusService.getTopicsForCondition(any()) } returns Result.success(emptyList())
+
+        // When
+        val result = repository.getPersonalizedContent(userId)
+
+        // Then
+        assertTrue(result.isSuccess)
+        coVerify { medlinePlusService.getTopicsForCondition(any()) }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // OBSERVATIONS NEEDING FOLLOW-UP TESTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `getObservationsNeedingFollowUp returns observations with follow-up flag`() = runTest {
+        // Given
+        val userId = "user-123"
+        val observations = listOf(
+            ObservationHistoryEntity(
+                id = "obs-1",
+                userId = userId,
+                timestamp = System.currentTimeMillis(),
+                observationType = "MOOD_PATTERN",
+                observation = "Your mood has been declining. Consider speaking with a healthcare provider.",
+                dataPointsAnalyzed = 14,
+                timeSpanDays = 14,
+                suggestsFollowUp = true,
+                wasActedUpon = null,
+                userFeedback = null
+            )
+        )
+        coEvery { userInteractionDao.getObservationsNeedingFollowUp(userId) } returns observations
+
+        // When
+        val result = repository.getObservationsNeedingFollowUp(userId)
+
+        // Then
+        assertEquals(1, result.size)
+        assertTrue(result.all { it.suggestsFollowUp })
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CONTENT VIEWING TESTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onContentViewed records short view as ARTICLE_VIEW`() = runTest {
+        // Given
+        val userId = "user-123"
+
+        // When - short view (< 30 seconds)
+        repository.onContentViewed(
+            userId = userId,
+            contentId = "article-1",
+            contentType = "ARTICLE",
+            contentTopic = "pregnancy",
+            viewDurationMs = 15_000  // 15 seconds
+        )
+
+        // Then
+        coVerify {
+            userInteractionDao.insertInteraction(match {
+                it.interactionType == "ARTICLE_VIEW"
+            })
+        }
+    }
+
+    @Test
+    fun `onContentViewed records long view as ARTICLE_COMPLETE`() = runTest {
+        // Given
+        val userId = "user-123"
+
+        // When - long view (> 30 seconds)
+        repository.onContentViewed(
+            userId = userId,
+            contentId = "article-1",
+            contentType = "ARTICLE",
+            contentTopic = "nutrition",
+            viewDurationMs = 60_000  // 60 seconds
+        )
+
+        // Then
+        coVerify {
+            userInteractionDao.insertInteraction(match {
+                it.interactionType == "ARTICLE_COMPLETE"
+            })
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ENGAGED TOPICS TESTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `getMostEngagedTopics returns top topics from completed articles`() = runTest {
         // Given
         val userId = "user-123"
         val interactions = listOf(
-            createInteraction(userId, "SYMPTOM_LOG"),
-            createInteraction(userId, "SYMPTOM_LOG"),
-            createInteraction(userId, "MOOD_LOG"),
-            createInteraction(userId, "ARTICLE_VIEW"),
-            createInteraction(userId, "SYMPTOM_LOG")
+            createInteractionWithMetadata(userId, "ARTICLE_COMPLETE", """{"topic":"pregnancy"}"""),
+            createInteractionWithMetadata(userId, "ARTICLE_COMPLETE", """{"topic":"pregnancy"}"""),
+            createInteractionWithMetadata(userId, "ARTICLE_COMPLETE", """{"topic":"nutrition"}""")
         )
-        coEvery { userInteractionDao.getRecentInteractions(userId, any()) } returns interactions
+        coEvery { userInteractionDao.getInteractionsByType(userId, "ARTICLE_COMPLETE") } returns interactions
 
         // When
-        val patterns = repository.getInteractionPatterns(userId)
+        val topics = repository.getMostEngagedTopics(userId)
 
         // Then
-        assertEquals("SYMPTOM_LOG", patterns.mostFrequentInteraction)
-        assertEquals(3, patterns.interactionCounts["SYMPTOM_LOG"])
-    }
-
-    @Test
-    fun `getContentPreferences learns from feedback`() = runTest {
-        // Given
-        val userId = "user-123"
-        val feedback = listOf(
-            createFeedback(userId, "ARTICLE", true),
-            createFeedback(userId, "ARTICLE", true),
-            createFeedback(userId, "OBSERVATION", false),
-            createFeedback(userId, "ARTICLE", true)
-        )
-        coEvery { userInteractionDao.getRecentFeedback(userId, any()) } returns feedback
-
-        // When
-        val preferences = repository.getContentPreferences(userId)
-
-        // Then
-        assertTrue(preferences.preferredTypes.contains("ARTICLE"))
-        assertTrue(preferences.helpfulRate["ARTICLE"]!! > 0.9f)
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // DANGER SIGN DETECTION TESTS
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    @Test
-    fun `detectsConcerningPatterns flags declining mood trend`() = runTest {
-        // Given
-        val userId = "user-123"
-        coEvery { moodRepository.getMoodTrend(userId) } returns "DECLINING"
-        coEvery { moodRepository.getAverageMoodScore(userId) } returns 2.0f
-
-        // When
-        val concerns = repository.detectConcerningPatterns(userId)
-
-        // Then
-        assertTrue(concerns.hasConcerningPatterns)
-        assertTrue(concerns.patterns.any { it.contains("mood", ignoreCase = true) })
-    }
-
-    @Test
-    fun `detectsConcerningPatterns suggests follow-up for low mood`() = runTest {
-        // Given
-        val userId = "user-123"
-        coEvery { moodRepository.getMoodTrend(userId) } returns "STABLE"
-        coEvery { moodRepository.getAverageMoodScore(userId) } returns 1.5f  // Very low
-
-        // When
-        val concerns = repository.detectConcerningPatterns(userId)
-
-        // Then
-        assertTrue(concerns.suggestsSeekingCare)
+        assertEquals("pregnancy", topics.first())
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // HELPER FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private fun createInteraction(
+    private fun createMockMoodLogs(count: Int): List<MoodLogForAnalysis> {
+        return (1..count).map { i ->
+            MoodLogForAnalysis(
+                timestamp = java.time.Instant.now().minusSeconds(i * 86400L),
+                moodScore = (3..5).random(),
+                sleepQuality = (2..5).random(),
+                energyLevel = (2..5).random()
+            )
+        }
+    }
+
+    private fun createInteractionWithMetadata(
         userId: String,
-        type: String
+        type: String,
+        metadata: String
     ): UserInteractionEntity {
         return UserInteractionEntity(
             id = java.util.UUID.randomUUID().toString(),
             userId = userId,
-            timestamp = Instant.now().toEpochMilli(),
+            timestamp = System.currentTimeMillis(),
             interactionType = type,
             targetId = null,
             targetType = null,
-            metadata = null,
+            metadata = metadata,
             sessionId = null,
             durationMs = null
         )
     }
-
-    private fun createFeedback(
-        userId: String,
-        contentType: String,
-        wasHelpful: Boolean
-    ): ContentFeedbackEntity {
-        return ContentFeedbackEntity(
-            id = java.util.UUID.randomUUID().toString(),
-            userId = userId,
-            contentId = java.util.UUID.randomUUID().toString(),
-            contentType = contentType,
-            contentTopic = null,
-            wasHelpful = wasHelpful,
-            feedbackText = null,
-            timestamp = Instant.now().toEpochMilli()
-        )
-    }
 }
+
+/**
+ * Mock mood log data class for testing
+ * Mirrors the actual MoodLog fields needed for analysis
+ */
+data class MoodLogForAnalysis(
+    val timestamp: java.time.Instant,
+    val moodScore: Int,
+    val sleepQuality: Int?,
+    val energyLevel: Int?
+)
