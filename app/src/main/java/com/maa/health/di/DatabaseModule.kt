@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.maa.health.data.local.database.MaaDatabase
 import com.maa.health.data.local.database.dao.*
+import com.maa.health.data.local.dao.UserInteractionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -73,4 +74,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideMedicationDao(database: MaaDatabase): MedicationDao = database.medicationDao()
+
+    // Agentic Learning System DAO
+    @Provides
+    @Singleton
+    fun provideUserInteractionDao(database: MaaDatabase): UserInteractionDao = database.userInteractionDao()
 }

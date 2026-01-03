@@ -26,6 +26,8 @@ android {
         // Build config fields for API keys (to be configured in local.properties)
         buildConfigField("String", "SARVAM_API_KEY", "\"${project.findProperty("SARVAM_API_KEY") ?: ""}\"")
         buildConfigField("String", "GOOGLE_TRANSLATE_API_KEY", "\"${project.findProperty("GOOGLE_TRANSLATE_API_KEY") ?: ""}\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"${project.findProperty("GEMINI_API_KEY") ?: ""}\"")
+        buildConfigField("String", "OPENFDA_API_KEY", "\"${project.findProperty("OPENFDA_API_KEY") ?: ""}\"")  // Optional, increases rate limit
     }
 
     buildTypes {
@@ -113,6 +115,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+
+    // Google AI - Gemini SDK (for Vertex AI via Google AI client)
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 
     // Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")

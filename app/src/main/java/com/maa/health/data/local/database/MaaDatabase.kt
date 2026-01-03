@@ -6,6 +6,11 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.maa.health.data.local.database.dao.*
 import com.maa.health.data.local.database.entity.*
+import com.maa.health.data.local.dao.UserInteractionDao
+import com.maa.health.data.local.entity.UserInteractionEntity
+import com.maa.health.data.local.entity.ContentFeedbackEntity
+import com.maa.health.data.local.entity.ObservationHistoryEntity
+import com.maa.health.data.local.entity.LearnedPreferenceEntity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -27,9 +32,14 @@ import kotlinx.serialization.json.Json
         GrowthMeasurementEntity::class,
         MedicationEntity::class,
         CyclePatternEntity::class,
-        MoodPatternEntity::class
+        MoodPatternEntity::class,
+        // Agentic Learning System entities
+        UserInteractionEntity::class,
+        ContentFeedbackEntity::class,
+        ObservationHistoryEntity::class,
+        LearnedPreferenceEntity::class
     ],
-    version = 1,
+    version = 2,  // Incremented for new entities
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -44,6 +54,9 @@ abstract class MaaDatabase : RoomDatabase() {
     abstract fun vaccinationDao(): VaccinationDao
     abstract fun growthDao(): GrowthDao
     abstract fun medicationDao(): MedicationDao
+
+    // Agentic Learning System DAO
+    abstract fun userInteractionDao(): UserInteractionDao
 }
 
 /**
