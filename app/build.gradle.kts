@@ -143,14 +143,32 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 
-    // Testing
+    // Testing - Unit Tests
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-android:1.13.8")
+    testImplementation("app.cash.turbine:turbine:1.0.0")  // Flow testing
+    testImplementation("com.google.truth:truth:1.1.5")  // Better assertions
+    testImplementation("org.robolectric:robolectric:4.11.1")  // Android unit tests
+    testImplementation("androidx.room:room-testing:2.6.1")  // Room/Migration testing
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")  // Mock HTTP
+    testImplementation("androidx.arch.core:core-testing:2.2.0")  // LiveData testing
+
+    // Testing - Android Instrumented Tests
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
+    androidTestImplementation("io.mockk:mockk-android:1.13.8")
+    androidTestImplementation("app.cash.turbine:turbine:1.0.0")
+    androidTestImplementation("com.google.truth:truth:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
