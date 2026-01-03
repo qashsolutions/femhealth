@@ -5,6 +5,7 @@ import com.maa.health.data.remote.medgemma.MedGemmaService
 import com.maa.health.data.remote.medgemma.MedGemmaLocalInference
 import com.maa.health.data.remote.medgemma.MedGemmaCloudService
 import com.maa.health.data.remote.ai.GeminiObservationService
+import com.maa.health.data.remote.guidance.ActionableGuidanceService
 import com.maa.health.data.remote.medical.MedlinePlusService
 import com.maa.health.data.remote.medical.OpenFDAService
 import dagger.Module
@@ -101,5 +102,13 @@ object AIModule {
         @Named("default") okHttpClient: OkHttpClient
     ): OpenFDAService {
         return OpenFDAService(okHttpClient)
+    }
+
+    // ===== Actionable Guidance Service (Empowerment + Safety) =====
+
+    @Provides
+    @Singleton
+    fun provideActionableGuidanceService(): ActionableGuidanceService {
+        return ActionableGuidanceService()
     }
 }
