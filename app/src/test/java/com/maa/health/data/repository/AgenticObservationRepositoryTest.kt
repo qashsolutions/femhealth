@@ -5,6 +5,7 @@ import com.maa.health.data.local.entity.ContentFeedbackEntity
 import com.maa.health.data.local.entity.ObservationHistoryEntity
 import com.maa.health.data.local.entity.UserInteractionEntity
 import com.maa.health.data.model.LifecycleStage
+import com.maa.health.data.model.MoodLog
 import com.maa.health.data.remote.ai.GeminiObservationService
 import com.maa.health.data.remote.ai.MoodPatternData
 import com.maa.health.data.remote.ai.ObservationType
@@ -17,6 +18,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
+import java.util.UUID
 
 /**
  * Unit tests for AgenticObservationRepository
@@ -473,13 +475,19 @@ class AgenticObservationRepositoryTest {
     // HELPER FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private fun createMockMoodLogs(count: Int): List<MoodLogForAnalysis> {
+    private fun createMockMoodLogs(count: Int): List<MoodLog> {
         return (1..count).map { i ->
-            MoodLogForAnalysis(
-                timestamp = java.time.Instant.now().minusSeconds(i * 86400L),
+            MoodLog(
+                id = UUID.randomUUID().toString(),
+                userId = "user-123",
+                timestamp = Instant.now().minusSeconds(i * 86400L),
                 moodScore = (3..5).random(),
                 sleepQuality = (2..5).random(),
-                energyLevel = (2..5).random()
+                energyLevel = (2..5).random(),
+                anxietyLevel = null,
+                notes = null,
+                voiceNoteUrl = null,
+                detectedKeywords = emptyList()
             )
         }
     }
@@ -502,14 +510,3 @@ class AgenticObservationRepositoryTest {
         )
     }
 }
-
-/**
- * Mock mood log data class for testing
- * Mirrors the actual MoodLog fields needed for analysis
- */
-data class MoodLogForAnalysis(
-    val timestamp: java.time.Instant,
-    val moodScore: Int,
-    val sleepQuality: Int?,
-    val energyLevel: Int?
-)

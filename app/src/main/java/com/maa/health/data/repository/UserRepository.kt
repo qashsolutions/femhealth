@@ -186,19 +186,6 @@ class UserRepository @Inject constructor(
         )
     }
 
-/**
- * User profile data for AI/agentic analysis
- */
-data class UserProfileForAI(
-    val id: String,
-    val lifecycleStage: LifecycleStage,
-    val age: Int,
-    val isPregnant: Boolean,
-    val isPostpartum: Boolean,
-    val hasChildren: Boolean,
-    val preferredLanguage: String
-)
-
     // ═══════════════════════════════════════════════════════════════════════════
     // MAPPERS
     // ═══════════════════════════════════════════════════════════════════════════
@@ -223,3 +210,17 @@ data class UserProfileForAI(
         )
     }
 }
+
+/**
+ * User profile data for AI/agentic analysis
+ * Used by AgenticObservationRepository for personalization
+ */
+data class UserProfileForAI(
+    val id: String = "",
+    val lifecycleStage: LifecycleStage,
+    val age: Int,
+    val isPregnant: Boolean = false,
+    val isPostpartum: Boolean = false,
+    val hasChildren: Boolean = false,
+    val preferredLanguage: String = "en"
+)

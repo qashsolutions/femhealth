@@ -72,7 +72,7 @@ class ActionableGuidanceServiceTest {
     @Test
     fun `getGuidance returns RED tier for pregnancy with severe bleeding`() {
         // Given
-        val symptoms = listOf(SymptomType.HEAVY_BLEEDING)
+        val symptoms = listOf(SymptomType.BLEEDING)
         val context = GuidanceContext(
             isPregnant = true,
             isPostpartum = false,

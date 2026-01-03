@@ -162,7 +162,7 @@ class HealthMonitoringServiceTest {
     private fun createDangerSymptom(): SymptomLogWithType {
         return SymptomLogWithType(
             id = "danger-1",
-            symptomType = SymptomType.HEAVY_BLEEDING,  // A danger sign
+            symptomType = SymptomType.BLEEDING,  // A danger sign for pregnancy
             timestamp = java.time.Instant.now()
         )
     }
