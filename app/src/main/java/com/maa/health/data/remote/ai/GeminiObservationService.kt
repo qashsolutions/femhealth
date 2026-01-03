@@ -34,7 +34,9 @@ class GeminiObservationService @Inject constructor() {
 
     private val model: GenerativeModel by lazy {
         GenerativeModel(
-            modelName = "gemini-1.5-flash",  // Fast, cost-effective for observations
+            // Using latest Gemini model - can be updated to newer versions as released
+            // Options: "gemini-2.0-flash-exp", "gemini-1.5-flash", "gemini-1.5-pro"
+            modelName = "gemini-2.0-flash-exp",
             apiKey = BuildConfig.GEMINI_API_KEY,
             generationConfig = generationConfig {
                 temperature = 0.3f  // Lower temperature for more consistent observations
