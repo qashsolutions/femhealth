@@ -106,6 +106,23 @@ class MoodRepository @Inject constructor(
         return moodDao.getMoodLogsAfter(userId, todayStart).first().firstOrNull()?.toDomain()
     }
 
+    /**
+     * Get mood logs for a specific period (for agentic analysis)
+     */
+    suspend fun getMoodLogsForPeriod(userId: String, days: Int): List<MoodLog> {
+        val startTime = Instant.now().minus(days.toLong(), ChronoUnit.DAYS)
+        return moodDao.getMoodLogsAfter(userId, startTime).first().map { it.toDomain() }
+    }
+
+    /**
+     * Get recent screenings with limit (for agentic analysis)
+     */
+    suspend fun getRecentScreenings(userId: String, limit: Int): List<ScreeningResult> {
+        return screeningDao.getScreeningsForUser(userId).first()
+            .take(limit)
+            .map { it.toDomain() }
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════
     // MOOD PATTERN ANALYSIS
     // ═══════════════════════════════════════════════════════════════════════════

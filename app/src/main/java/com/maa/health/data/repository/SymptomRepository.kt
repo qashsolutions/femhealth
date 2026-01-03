@@ -12,6 +12,7 @@ import com.maa.health.data.model.Urgency
 import com.maa.health.data.remote.medgemma.MedGemmaService
 import com.maa.health.data.remote.medgemma.TriageContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.Instant
@@ -135,6 +136,14 @@ class SymptomRepository @Inject constructor(
 
     suspend fun getSymptomById(id: String): SymptomLog? {
         return symptomDao.getSymptomById(id)?.toDomain()
+    }
+
+    /**
+     * Get symptom logs for a specific period (for agentic analysis)
+     */
+    suspend fun getSymptomLogsForPeriod(userId: String, days: Int): List<SymptomLog> {
+        val startTime = Instant.now().minus(days.toLong(), ChronoUnit.DAYS)
+        return symptomDao.getSymptomLogsAfter(userId, startTime).first().map { it.toDomain() }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

@@ -135,6 +135,20 @@ class CycleRepository @Inject constructor(
         }
     }
 
+    /**
+     * Get the last completed cycle (for agentic analysis)
+     */
+    suspend fun getLastCycle(userId: String): CycleLog? {
+        return cycleDao.getRecentCycles(userId, 1).first().firstOrNull()?.toDomain()
+    }
+
+    /**
+     * Get total cycle count (for agentic analysis)
+     */
+    suspend fun getCycleCount(userId: String): Int {
+        return cycleDao.getCycleHistory(userId).first().size
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════
     // PATTERN ANALYSIS & PREDICTIONS
     // ═══════════════════════════════════════════════════════════════════════════

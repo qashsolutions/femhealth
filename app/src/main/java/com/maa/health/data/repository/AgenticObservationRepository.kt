@@ -26,6 +26,7 @@ import com.maa.health.data.remote.ai.UserObservationContext
 import com.maa.health.data.remote.medical.HealthCondition
 import com.maa.health.data.remote.medical.HealthTopic
 import com.maa.health.data.remote.medical.MedlinePlusService
+import com.maa.health.data.model.LifecycleStage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.time.Instant
@@ -546,7 +547,7 @@ class AgenticObservationRepository @Inject constructor(
         return concerns.toList()
     }
 
-    private fun extractTrackedConditions(user: UserProfile?): List<String> {
+    private fun extractTrackedConditions(user: UserProfileForAI?): List<String> {
         val conditions = mutableListOf<String>()
         user?.let {
             if (it.isPregnant) conditions.add("pregnancy")
@@ -583,25 +584,4 @@ data class PersonalizedContent(
     val contentType: String
 )
 
-/**
- * User profile placeholder - should match your actual UserProfile
- */
-data class UserProfile(
-    val id: String,
-    val lifecycleStage: LifecycleStage,
-    val age: Int,
-    val isPregnant: Boolean,
-    val isPostpartum: Boolean,
-    val hasChildren: Boolean,
-    val preferredLanguage: String
-)
-
-enum class LifecycleStage {
-    ADOLESCENCE,
-    REPRODUCTIVE,
-    PREGNANCY,
-    POSTPARTUM,
-    CHILD_CARE,
-    MIDLIFE,
-    ELDER
-}
+// UserProfileForAI is defined in UserRepository.kt

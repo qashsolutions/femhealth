@@ -161,6 +161,44 @@ class UserRepository @Inject constructor(
         userPreferences.clearAllPreferences()
     }
 
+    /**
+     * Get user profile for agentic analysis
+     * Combines user data with preferences for AI personalization
+     */
+    suspend fun getUserProfile(userId: String): UserProfileForAI? {
+        val user = userDao.getUserById(userId)?.toDomain() ?: return null
+        val prefs = userPreferences.userPreferencesFlow.first()
+
+        val age = user.dateOfBirth?.let {
+            java.time.Period.between(it, LocalDate.now()).years
+        } ?: 25
+
+        val primaryStage = prefs.lifecycleStages.firstOrNull() ?: LifecycleStage.REPRODUCTIVE
+
+        return UserProfileForAI(
+            id = user.id,
+            lifecycleStage = primaryStage,
+            age = age,
+            isPregnant = prefs.lifecycleStages.contains(LifecycleStage.PREGNANCY),
+            isPostpartum = prefs.lifecycleStages.contains(LifecycleStage.POSTPARTUM),
+            hasChildren = prefs.lifecycleStages.contains(LifecycleStage.CHILD_CARE),
+            preferredLanguage = prefs.language.code
+        )
+    }
+
+/**
+ * User profile data for AI/agentic analysis
+ */
+data class UserProfileForAI(
+    val id: String,
+    val lifecycleStage: LifecycleStage,
+    val age: Int,
+    val isPregnant: Boolean,
+    val isPostpartum: Boolean,
+    val hasChildren: Boolean,
+    val preferredLanguage: String
+)
+
     // ═══════════════════════════════════════════════════════════════════════════
     // MAPPERS
     // ═══════════════════════════════════════════════════════════════════════════
