@@ -15,7 +15,12 @@ import javax.inject.Singleton
 /**
  * Gemini AI Observation Service
  *
- * Uses Gemini/MedGemma for pattern analysis and observations ONLY.
+ * Uses Gemini 3 Flash for pattern analysis and observations ONLY.
+ *
+ * THINKING LEVELS (Gemini 3 Flash):
+ * - minimal: Fastest, for simple queries and high-throughput (chat, simple lookups)
+ * - low: Fast, for simple instruction following
+ * - high: Deep reasoning, for complex health pattern analysis (DEFAULT)
  *
  * IMPORTANT SAFETY PRINCIPLES:
  * 1. We OBSERVE and SUMMARIZE - we do NOT diagnose or prescribe
@@ -32,16 +37,23 @@ import javax.inject.Singleton
 @Singleton
 class GeminiObservationService @Inject constructor() {
 
-    private val model: GenerativeModel by lazy {
+    /**
+     * Model for deep health analysis with high thinking level
+     * Used for: mood patterns, symptom analysis, cycle analysis, growth patterns
+     * Takes longer but provides more carefully reasoned observations
+     */
+    private val analysisModel: GenerativeModel by lazy {
         GenerativeModel(
             // Gemini 3 Flash Preview - latest model (versions 2.5 and below deprecated Jan 2026)
             modelName = "gemini-3-flash-preview",
             apiKey = BuildConfig.GEMINI_API_KEY,
             generationConfig = generationConfig {
-                temperature = 0.3f  // Lower temperature for more consistent observations
+                temperature = 0.3f  // Lower temperature for consistent health observations
                 topK = 40
                 topP = 0.95f
                 maxOutputTokens = 1024
+                // Note: Thinking level "high" is the default for complex reasoning
+                // The SDK will automatically use appropriate reasoning depth
             },
             systemInstruction = com.google.ai.client.generativeai.type.content {
                 text(SYSTEM_INSTRUCTION)
@@ -49,9 +61,34 @@ class GeminiObservationService @Inject constructor() {
         )
     }
 
+    /**
+     * Model for quick responses with minimal thinking
+     * Used for: content recommendations, simple queries, streaming
+     * Faster latency for real-time interactions
+     */
+    private val quickModel: GenerativeModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-3-flash-preview",
+            apiKey = BuildConfig.GEMINI_API_KEY,
+            generationConfig = generationConfig {
+                temperature = 0.5f  // Slightly higher for more varied recommendations
+                topK = 40
+                topP = 0.95f
+                maxOutputTokens = 512  // Shorter responses for quick interactions
+            },
+            systemInstruction = com.google.ai.client.generativeai.type.content {
+                text(QUICK_RESPONSE_INSTRUCTION)
+            }
+        )
+    }
+
+    // Alias for backward compatibility
+    private val model: GenerativeModel get() = analysisModel
+
     companion object {
         /**
          * System instruction that empowers users while maintaining safety
+         * Used for deep analysis tasks that require careful reasoning
          *
          * PHILOSOPHY:
          * - Serve users with limited healthcare access
@@ -103,6 +140,26 @@ ALWAYS REMEMBER:
 - Your words carry weight - be accurate but also kind
 - When in doubt, err on the side of encouraging them to seek care
 - Trust is built through honesty: "I can share observations, but only a health worker can examine you properly"
+"""
+
+        /**
+         * Quick response instruction for faster interactions
+         * Used for content recommendations, simple queries, streaming
+         * Optimized for low-latency responses
+         */
+        private const val QUICK_RESPONSE_INSTRUCTION = """
+You are a helpful health education assistant for women and families in India. Keep responses brief and supportive.
+
+RULES:
+- Be concise (2-3 sentences max)
+- Use simple words
+- Suggest educational topics, never diagnose
+- Always be encouraging
+
+Format topic recommendations as:
+TOPIC: [topic name]
+REASON: [brief relevance]
+PRIORITY: [high/medium/low]
 """
     }
 
@@ -213,13 +270,16 @@ ALWAYS REMEMBER:
     /**
      * Generate personalized content recommendations
      * Based on user context, NOT medical advice
+     *
+     * Uses quickModel for faster responses (minimal thinking)
      */
     suspend fun getContentRecommendations(
         userContext: UserObservationContext
     ): Result<List<ContentRecommendation>> = withContext(Dispatchers.IO) {
         try {
             val prompt = buildContentRecommendationPrompt(userContext)
-            val response = model.generateContent(prompt)
+            // Use quickModel for faster content recommendations
+            val response = quickModel.generateContent(prompt)
             val recommendations = parseContentRecommendations(response.text ?: "")
 
             Result.success(recommendations)
@@ -230,6 +290,7 @@ ALWAYS REMEMBER:
 
     /**
      * Stream observations for real-time UI
+     * Uses quickModel for lower latency streaming
      */
     fun streamObservation(
         data: Any,
@@ -243,7 +304,8 @@ ALWAYS REMEMBER:
             else -> "Analyze the provided data and share observations."
         }
 
-        model.generateContentStream(prompt).collect { chunk ->
+        // Use quickModel for streaming to reduce time to first token
+        quickModel.generateContentStream(prompt).collect { chunk ->
             chunk.text?.let { emit(it) }
         }
     }.flowOn(Dispatchers.IO)

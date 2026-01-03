@@ -1,11 +1,13 @@
 package com.maa.health.data.remote.medical
 
+import android.util.Xml
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.json.XML
+import org.xmlpull.v1.XmlPullParser
+import java.io.StringReader
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -191,47 +193,75 @@ class MedlinePlusService @Inject constructor(
         return searchHealthTopics(searchTerms)
     }
 
+    /**
+     * Parse MedlinePlus XML response using Android's XmlPullParser
+     * This avoids external dependencies and uses built-in Android XML parsing
+     */
     private fun parseHealthTopicsXml(xml: String): List<HealthTopic> {
         val topics = mutableListOf<HealthTopic>()
         try {
-            val json = XML.toJSONObject(xml)
-            val nlmSearchResult = json.optJSONObject("nlmSearchResult")
-            val list = nlmSearchResult?.optJSONObject("list")
-            val documents = list?.optJSONArray("document") ?: return emptyList()
+            val parser = Xml.newPullParser()
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+            parser.setInput(StringReader(xml))
 
-            for (i in 0 until documents.length()) {
-                val doc = documents.optJSONObject(i) ?: continue
-                val content = doc.optJSONArray("content") ?: continue
+            var eventType = parser.eventType
+            var currentUrl = ""
+            var currentTitle = ""
+            var currentSnippet = ""
+            var inDocument = false
+            var currentContentName = ""
 
-                var title = ""
-                var snippet = ""
-                var url = ""
-
-                for (j in 0 until content.length()) {
-                    val item = content.optJSONObject(j) ?: continue
-                    when (item.optString("name")) {
-                        "title" -> title = item.optString("content", "")
-                        "snippet" -> snippet = item.optString("content", "")
-                            .replace("<span class=\"qt0\">", "")
-                            .replace("</span>", "")
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                when (eventType) {
+                    XmlPullParser.START_TAG -> {
+                        when (parser.name) {
+                            "document" -> {
+                                inDocument = true
+                                currentUrl = parser.getAttributeValue(null, "url") ?: ""
+                                currentTitle = ""
+                                currentSnippet = ""
+                            }
+                            "content" -> {
+                                if (inDocument) {
+                                    currentContentName = parser.getAttributeValue(null, "name") ?: ""
+                                }
+                            }
+                        }
+                    }
+                    XmlPullParser.TEXT -> {
+                        if (inDocument && parser.text != null) {
+                            val text = parser.text.trim()
+                                .replace("<span class=\"qt0\">", "")
+                                .replace("</span>", "")
+                            when (currentContentName) {
+                                "title" -> currentTitle = text
+                                "snippet" -> currentSnippet = text
+                            }
+                        }
+                    }
+                    XmlPullParser.END_TAG -> {
+                        when (parser.name) {
+                            "content" -> currentContentName = ""
+                            "document" -> {
+                                if (currentTitle.isNotEmpty()) {
+                                    topics.add(
+                                        HealthTopic(
+                                            title = currentTitle,
+                                            summary = currentSnippet,
+                                            url = currentUrl,
+                                            source = "MedlinePlus (NIH)"
+                                        )
+                                    )
+                                }
+                                inDocument = false
+                            }
+                        }
                     }
                 }
-
-                url = doc.optString("url", "")
-
-                if (title.isNotEmpty()) {
-                    topics.add(
-                        HealthTopic(
-                            title = title,
-                            summary = snippet,
-                            url = url,
-                            source = "MedlinePlus (NIH)"
-                        )
-                    )
-                }
+                eventType = parser.next()
             }
         } catch (e: Exception) {
-            // Return empty list on parse error
+            // Return empty list on parse error - fail gracefully
         }
         return topics
     }

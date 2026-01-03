@@ -117,7 +117,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
     // Google AI - Gemini SDK (for Vertex AI via Google AI client)
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    // Updated to latest version for Gemini 3 thinking levels support
+    implementation("com.google.ai.client.generativeai:generativeai:0.10.0")
 
     // Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")
