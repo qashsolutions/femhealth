@@ -15,12 +15,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.maa.health.data.model.SupportedCountry
+import com.maa.health.ui.components.CountryPickerBottomSheet
 import com.maa.health.ui.components.MaaButton
 import com.maa.health.ui.components.MaaButtonSize
 import com.maa.health.ui.components.MaaButtonVariant
@@ -28,23 +32,31 @@ import com.maa.health.ui.components.MaaPhoneField
 import com.maa.health.ui.theme.MaaColors
 import com.maa.health.ui.theme.MaaSpacing
 import com.maa.health.ui.theme.MaaTypography
+import kotlinx.coroutines.launch
 
 /**
  * Phone authentication screen
  *
  * Collects phone number for Firebase Auth OTP
+ * Supports all countries in South Asia and Africa
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhoneAuthScreen(
-    onOtpSent: (String) -> Unit,
+    onOtpSent: (phoneNumber: String, country: SupportedCountry) -> Unit,
     onBack: () -> Unit
 ) {
     var phoneNumber by remember { mutableStateOf("") }
+    var selectedCountry by remember { mutableStateOf(SupportedCountry.getDefault()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorText by remember { mutableStateOf<String?>(null) }
+    var showCountryPicker by remember { mutableStateOf(false) }
 
-    val isValidPhone = phoneNumber.length == 10
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    // Validate phone number (minimum 6 digits, maximum 15)
+    val isValidPhone = phoneNumber.length >= 6
 
     Column(
         modifier = Modifier
@@ -91,15 +103,22 @@ fun PhoneAuthScreen(
 
             Spacer(modifier = Modifier.height(MaaSpacing.extraLarge))
 
-            // Phone input
+            // Phone input with country picker
             MaaPhoneField(
                 value = phoneNumber,
                 onValueChange = {
                     phoneNumber = it
                     errorText = null
                 },
+                selectedCountry = selectedCountry,
+                onCountryClick = {
+                    scope.launch {
+                        showCountryPicker = true
+                        sheetState.show()
+                    }
+                },
                 label = "Phone Number",
-                placeholder = "10-digit mobile number",
+                placeholder = "Mobile number",
                 errorText = errorText
             )
 
@@ -120,10 +139,10 @@ fun PhoneAuthScreen(
                 onClick = {
                     if (isValidPhone) {
                         isLoading = true
-                        // TODO: Implement Firebase phone auth
-                        onOtpSent("+91$phoneNumber")
+                        // Send full phone number with country code
+                        onOtpSent(phoneNumber, selectedCountry)
                     } else {
-                        errorText = "Please enter a valid 10-digit phone number"
+                        errorText = "Please enter a valid phone number"
                     }
                 },
                 enabled = isValidPhone && !isLoading,
@@ -134,15 +153,32 @@ fun PhoneAuthScreen(
 
             Spacer(modifier = Modifier.height(MaaSpacing.medium))
 
-            // Skip option (for testing)
+            // Skip option (for testing - remove in production)
             MaaButton(
                 text = "Skip for now",
-                onClick = { onOtpSent("skip") },
+                onClick = { onOtpSent("skip", selectedCountry) },
                 variant = MaaButtonVariant.TERTIARY,
                 fullWidth = true
             )
 
             Spacer(modifier = Modifier.height(MaaSpacing.large))
         }
+    }
+
+    // Country picker bottom sheet
+    if (showCountryPicker) {
+        CountryPickerBottomSheet(
+            sheetState = sheetState,
+            selectedCountry = selectedCountry,
+            onCountrySelected = { country ->
+                selectedCountry = country
+            },
+            onDismiss = {
+                scope.launch {
+                    sheetState.hide()
+                    showCountryPicker = false
+                }
+            }
+        )
     }
 }

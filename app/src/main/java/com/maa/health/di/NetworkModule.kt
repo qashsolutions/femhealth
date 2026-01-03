@@ -1,6 +1,7 @@
 package com.maa.health.di
 
 import com.maa.health.BuildConfig
+import com.maa.health.data.remote.google.GoogleTranslateService
 import com.maa.health.data.remote.sarvam.SarvamApiService
 import dagger.Module
 import dagger.Provides
@@ -15,7 +16,9 @@ import javax.inject.Singleton
 /**
  * Network dependency injection module
  *
- * Provides OkHttp clients and API services
+ * Provides OkHttp clients and API services for:
+ * - Sarvam AI (Indian languages - STT/TTS)
+ * - Google Translate (International languages for Africa & other South Asia)
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,6 +39,7 @@ object NetworkModule {
             redactHeader("Authorization")
             redactHeader("Cookie")
             redactHeader("Set-Cookie")
+            redactHeader("X-Goog-Api-Key")
         }
     }
 
@@ -76,9 +80,42 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("google")
+    fun provideGoogleOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val originalUrl = chain.request().url
+                val newUrl = originalUrl.newBuilder()
+                    .addQueryParameter("key", BuildConfig.GOOGLE_TRANSLATE_API_KEY)
+                    .build()
+                val request = chain.request().newBuilder()
+                    .url(newUrl)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
     fun provideSarvamApiService(
         @Named("sarvam") okHttpClient: OkHttpClient
     ): SarvamApiService {
         return SarvamApiService(okHttpClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoogleTranslateService(
+        @Named("google") okHttpClient: OkHttpClient
+    ): GoogleTranslateService {
+        return GoogleTranslateService(okHttpClient)
     }
 }

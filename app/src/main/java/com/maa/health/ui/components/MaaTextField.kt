@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -223,17 +225,19 @@ fun MaaPasswordField(
 }
 
 /**
- * Phone number field with country code
+ * Phone number field with country picker
  */
 @Composable
 fun MaaPhoneField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    countryCode: String = "+91",
+    selectedCountry: com.maa.health.data.model.SupportedCountry = com.maa.health.data.model.SupportedCountry.INDIA,
+    onCountryClick: () -> Unit = {},
     label: String? = null,
     placeholder: String = "Phone number",
-    errorText: String? = null
+    errorText: String? = null,
+    maxLength: Int = 15  // Flexible for different country formats
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -266,20 +270,36 @@ fun MaaPhoneField(
                 .height(52.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Country code
+            // Country picker button
             Box(
                 modifier = Modifier
                     .clip(MaaShapes.medium)
                     .background(MaaColors.surfaceVariant)
                     .border(1.dp, borderColor, MaaShapes.medium)
+                    .clickable { onCountryClick() }
                     .padding(horizontal = MaaSpacing.medium, vertical = MaaSpacing.mediumLarge),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = countryCode,
-                    style = MaaTypography.bodyMedium,
-                    color = MaaColors.textPrimary
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaaSpacing.extraSmall)
+                ) {
+                    Text(
+                        text = selectedCountry.flag,
+                        style = MaaTypography.bodyMedium
+                    )
+                    Text(
+                        text = selectedCountry.dialCode,
+                        style = MaaTypography.bodyMedium,
+                        color = MaaColors.textPrimary
+                    )
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Select country",
+                        modifier = Modifier.size(16.dp),
+                        tint = MaaColors.textTertiary
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(MaaSpacing.small))
@@ -288,8 +308,8 @@ fun MaaPhoneField(
             BasicTextField(
                 value = value,
                 onValueChange = { newValue ->
-                    // Only allow digits, max 10 characters
-                    if (newValue.all { it.isDigit() } && newValue.length <= 10) {
+                    // Only allow digits, flexible max length for different countries
+                    if (newValue.all { it.isDigit() } && newValue.length <= maxLength) {
                         onValueChange(newValue)
                     }
                 },

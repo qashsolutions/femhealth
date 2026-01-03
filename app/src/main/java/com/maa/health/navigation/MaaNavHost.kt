@@ -22,6 +22,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.maa.health.auth.BiometricAuthManager
 import com.maa.health.ui.screens.care.CareHubScreen
 import com.maa.health.ui.screens.childcare.ChildCareHomeScreen
 import com.maa.health.ui.screens.cycle.CycleHomeScreen
@@ -29,6 +30,7 @@ import com.maa.health.ui.screens.emergency.EmergencyScreen
 import com.maa.health.ui.screens.home.HomeScreen
 import com.maa.health.ui.screens.learn.LearnHubScreen
 import com.maa.health.ui.screens.mentalhealth.MentalHealthHomeScreen
+import com.maa.health.ui.screens.onboarding.AuthScreen
 import com.maa.health.ui.screens.onboarding.LanguageSelectionScreen
 import com.maa.health.ui.screens.onboarding.LifecycleStageSelectionScreen
 import com.maa.health.ui.screens.onboarding.OtpVerificationScreen
@@ -44,11 +46,13 @@ import com.maa.health.ui.screens.you.YouHubScreen
 /**
  * Main navigation host for Maa app
  *
- * Handles all navigation between screens with appropriate transitions
+ * Handles all navigation between screens with appropriate transitions.
+ * Authentication flow: Language -> Auth (Face ID primary) -> Phone OTP (fallback) -> Profile
  */
 @Composable
 fun MaaNavHost(
     navController: NavHostController,
+    biometricAuthManager: BiometricAuthManager,
     startDestination: String = Screen.Splash.route,
     innerPadding: PaddingValues = PaddingValues()
 ) {
@@ -95,15 +99,36 @@ fun MaaNavHost(
         composable(Screen.LanguageSelection.route) {
             LanguageSelectionScreen(
                 onLanguageSelected = {
-                    navController.navigate(Screen.PhoneAuth.route)
+                    // Navigate to Auth screen (Face ID primary, OTP fallback)
+                    navController.navigate(Screen.Auth.route)
                 }
+            )
+        }
+
+        composable(Screen.Auth.route) {
+            AuthScreen(
+                biometricAuthManager = biometricAuthManager,
+                isReturningUser = false,
+                onBiometricSuccess = {
+                    // Face ID successful, go directly to profile setup
+                    navController.navigate(Screen.ProfileSetup.route) {
+                        popUpTo(Screen.LanguageSelection.route) { inclusive = false }
+                    }
+                },
+                onUsePhone = {
+                    // User chose to use phone OTP instead
+                    navController.navigate(Screen.PhoneAuth.route)
+                },
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(Screen.PhoneAuth.route) {
             PhoneAuthScreen(
-                onOtpSent = { phoneNumber ->
-                    navController.navigate(Screen.OtpVerification.createRoute(phoneNumber))
+                onOtpSent = { phoneNumber, country ->
+                    // Store country for later use, navigate with full phone number
+                    val fullPhoneNumber = "${country.dialCode}$phoneNumber"
+                    navController.navigate(Screen.OtpVerification.createRoute(fullPhoneNumber))
                 },
                 onBack = { navController.popBackStack() }
             )
