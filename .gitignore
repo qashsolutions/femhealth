@@ -1,3 +1,94 @@
+# ================================================
+# FEMHEALTH PWA - .gitignore
+# ================================================
+
+# ================================================
+# SENSITIVE FILES - NEVER COMMIT
+# ================================================
+
+# Environment variables (API keys, secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# API Keys and secrets
+*.secret
+*.secrets
+secrets.json
+secrets.properties
+api-keys.json
+credentials.json
+
+# Firebase configuration (contains project secrets)
+google-services.json
+firebase-config.json
+firebase-adminsdk*.json
+serviceAccountKey.json
+
+# Claude/Anthropic API keys
+anthropic.json
+claude-config.json
+
+# Sarvam AI keys
+sarvam-config.json
+
+# Google Cloud credentials
+gcloud-credentials.json
+*.p12
+
+# Local configuration (Android legacy - contains API keys)
+local.properties
+
+# ================================================
+# PWA / NODE.JS
+# ================================================
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+
+# Cache
+.cache/
+.parcel-cache/
+.turbo/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# PWA generated
+sw.js
+workbox-*.js
+precache-manifest.*.js
+
+# ================================================
+# ANDROID (Legacy - kept for reference)
+# ================================================
+
 # Built application files
 *.apk
 *.aar
@@ -13,22 +104,14 @@
 # Generated files
 bin/
 gen/
-out/
 release/
 
 # Gradle files
 .gradle/
-build/
 **/build/
-
-# Local configuration file (contains API keys - NEVER COMMIT)
-local.properties
 
 # Proguard folder
 proguard/
-
-# Log Files
-*.log
 
 # Android Studio Navigation editor temp files
 .navigation/
@@ -36,7 +119,25 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# IntelliJ
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder
+.externalNativeBuild/
+.cxx/
+
+# lint
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+
+# ================================================
+# IDE & EDITORS
+# ================================================
+
+# IntelliJ / Android Studio
 *.iml
 .idea/
 .idea/workspace.xml
@@ -49,40 +150,83 @@ captures/
 .idea/modules.xml
 .idea/*.iml
 
-# Keystore files
-*.jks
-*.keystore
+# VS Code
+.vscode/
+*.code-workspace
 
-# External native build folder
-.externalNativeBuild/
-.cxx/
+# Vim
+*.swp
+*.swo
+*~
 
-# Google Services (contains project config - be careful)
-# google-services.json
+# Emacs
+*~
+\#*\#
+.#*
 
-# Version control
-vcs.xml
+# ================================================
+# OS FILES
+# ================================================
 
-# lint
-lint/intermediates/
-lint/generated/
-lint/outputs/
-lint/tmp/
-
-# Secrets and API keys
-*.secret
-*.secrets
-secrets.properties
-
-# Mac OS
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
 # Windows
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Coverage reports
+# Linux
+*~
+
+# ================================================
+# TESTING & COVERAGE
+# ================================================
+
 coverage/
 *.exec
+*.lcov
+.jest/
+jest-results/
+playwright-report/
+test-results/
+
+# ================================================
+# MISC
+# ================================================
 
 # Firebase
 firebase-debug.log
+.firebase/
+firestore-debug.log
+ui-debug.log
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Backup files
+*.bak
+*.backup
+
+# Version control (nested)
+vcs.xml
+
+# Debug
+*.debug
+
+# Database files (local dev)
+*.sqlite
+*.sqlite3
+*.db
+
+# Certificates (except public certs)
+*.pem
+*.key
+!public.pem
+!public.key
