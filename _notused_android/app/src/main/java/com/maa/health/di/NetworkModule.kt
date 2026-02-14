@@ -17,6 +17,8 @@ import javax.inject.Singleton
  * Network dependency injection module
  *
  * Provides OkHttp clients and API services for:
+ * - Claude AI (Anthropic) - Primary AI for triage and reasoning
+ * - Gemini AI (Google) - Backup AI for failover
  * - Sarvam AI (Indian languages - STT/TTS)
  * - Google Translate (International languages for Africa & other South Asia)
  */
@@ -40,6 +42,8 @@ object NetworkModule {
             redactHeader("Cookie")
             redactHeader("Set-Cookie")
             redactHeader("X-Goog-Api-Key")
+            redactHeader("x-api-key")
+            redactHeader("anthropic-api-key")
         }
     }
 
@@ -53,6 +57,53 @@ object NetworkModule {
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("claude")
+    fun provideClaudeOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("x-api-key", BuildConfig.CLAUDE_API_KEY)
+                    .addHeader("anthropic-version", "2023-01-01")
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)  // Claude can take longer for complex reasoning
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("gemini")
+    fun provideGeminiOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val originalUrl = chain.request().url
+                val newUrl = originalUrl.newBuilder()
+                    .addQueryParameter("key", BuildConfig.GEMINI_API_KEY)
+                    .build()
+                val request = chain.request().newBuilder()
+                    .url(newUrl)
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }

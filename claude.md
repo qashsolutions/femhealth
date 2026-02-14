@@ -19,6 +19,27 @@ The app is available in:
 
 ---
 
+## AI Stack
+
+### Primary: Claude Opus 4.6 (Anthropic)
+- Model ID: `claude-opus-4-6`
+- Used for: Symptom triage, screening interpretation, health education, pattern analysis
+- API: Anthropic Messages API (`api.anthropic.com/v1/messages`)
+- Why: Best reasoning, 1M context window, safety-conscious, culturally sensitive responses
+
+### Backup: Gemini 3 Flash (Google)
+- Model ID: `gemini-3-flash`
+- Used for: Automatic failover when Claude is unavailable
+- API: Gemini API (`generativelanguage.googleapis.com/v1/models`)
+- Why: Near-Pro reasoning, low latency, cost-effective fallback
+
+### On-Device: Rule-Based Triage Engine
+- No model download required
+- WHO pregnancy danger signs + IMCI child health protocols
+- <50ms inference, works fully offline
+
+---
+
 ## Future Development - Reserved Features
 
 ### Aadhaar Integration (India Only)
@@ -58,5 +79,7 @@ The app is available in:
 - **DI**: Hilt
 - **Database**: Room
 - **Preferences**: DataStore
+- **AI (Primary)**: Claude Opus 4.6 (Anthropic)
+- **AI (Backup)**: Gemini 3 Flash (Google)
 - **Speech/Translation (India)**: Sarvam AI
 - **Translation (Other regions)**: Google Translate API

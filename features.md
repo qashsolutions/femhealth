@@ -6,23 +6,33 @@ Maa (meaning "Mother" in Hindi) is a comprehensive women's health companion cove
 
 ## AI Features
 
-### MedGemma Medical AI (Dual-Model Architecture)
+### AI Architecture (Claude + Gemini with On-Device Triage)
 
-The app integrates Google's MedGemma medical AI through a hybrid on-device and cloud architecture defined in `MedGemmaService.kt`, `MedGemmaLocalInference.kt`, and `MedGemmaCloudService.kt`.
+The app uses a three-tier AI architecture defined in `MaaAIService.kt`, `ClaudeAIService.kt`, `GeminiAIService.kt`, and `OnDeviceTriageEngine.kt`.
 
-**On-device inference (MedGemma 4B)**
-- Runs a quantized ~2.5GB model locally for latency-critical tasks (<500ms on mid-range devices)
-- Performs immediate danger sign detection for pregnancy (WHO protocol) and child health (IMCI protocol) without requiring network access
+**On-device rule-based triage engine (OnDeviceTriageEngine)**
+- Runs entirely on-device with zero network dependency and zero model download
+- Uses validated WHO pregnancy danger sign protocols and IMCI child health protocols
 - Handles rule-based triage for fever, gastrointestinal symptoms, and pain with confidence scoring
-- Falls back to rule-based logic when the model is unavailable
-- Automatically escalates to the cloud model when local confidence is below 85%
+- Inference time: <50ms (pure rule-based, no ML overhead)
+- Automatically escalates to cloud AI when confidence is below 85%
 
-**Cloud inference (MedGemma 27B)**
+**Primary cloud AI: Claude Opus 4.6 (Anthropic)**
+- Model: `claude-opus-4-6` via Anthropic Messages API
+- 1M token context window for complex multi-turn reasoning
 - Handles complex triage decisions when on-device confidence is insufficient
 - Interprets validated mental health screening instruments (EPDS, PHQ-9, PHQ-A, GAD-7) with severity classification, recommendations, and crisis resource routing
 - Streams personalized health education content based on user lifecycle stage, language, and literacy level
 - Analyzes symptom patterns over time to detect mood trends, cycle correlations, and recurring issues
-- Includes a network-failure fallback that returns conservative triage guidance
+- Excels at culturally appropriate health communication for South Asian and African contexts
+- Safety-conscious medical guidance with careful reasoning
+
+**Backup cloud AI: Gemini 3 Flash (Google)**
+- Model: `gemini-3-flash` via Gemini API
+- Automatic failover when Claude API is unavailable or returns errors
+- Near-Pro-level reasoning at lower latency for high-availability
+- Includes network-failure fallback that returns conservative triage guidance
+- Same validated screening algorithms as Claude (EPDS, PHQ-9, PHQ-A, GAD-7 scoring is deterministic)
 
 **AI-powered symptom triage**
 - Multi-step assessment: body region selection, symptom identification, severity rating, contextual evaluation
@@ -30,6 +40,7 @@ The app integrates Google's MedGemma medical AI through a hybrid on-device and c
 - Action routing: call emergency, go to hospital now, go to hospital today, schedule visit, or home management
 - Context-aware decisions factoring in pregnancy status, gestational week, postpartum state, child age, chronic conditions, and current medications
 - Confidence-scored results with automatic cloud escalation for ambiguous cases
+- Three-layer failover: on-device rules, Claude (primary), Gemini (backup)
 
 **AI-powered screening interpretation**
 - EPDS scoring with self-harm detection on question 10, triggering emergency-level resources (iCall, Vandrevala Foundation helplines)
@@ -157,13 +168,14 @@ The `CyclePattern` model learns from logged data to generate personalized predic
 - **Biometric authentication**: Face ID and fingerprint via AndroidX Biometric as the primary login method
 - **Phone OTP fallback**: Firebase Auth phone-based verification, no passwords required
 - **30-day session persistence**
-- **Security hardening**: App backup disabled, cleartext traffic prohibited, HTTP logging secured (BASIC level, headers redacted), SMS permissions removed
+- **Security hardening**: App backup disabled, cleartext traffic prohibited, HTTP logging secured (BASIC level, headers redacted), SMS permissions removed, API key headers redacted (x-api-key, anthropic-api-key, Authorization)
 
 ---
 
 ## Architecture and Infrastructure
 
 - **Tech stack**: Kotlin, Jetpack Compose, Material 3, MVVM + Clean Architecture, Hilt dependency injection
+- **AI stack**: Claude Opus 4.6 (primary), Gemini 3 Flash (backup), on-device rule-based triage (offline)
 - **Local storage**: Room (SQLite) database with DataStore preferences for offline-first operation
 - **Cloud backend**: Firebase (Auth, Firestore, Storage, Functions, Analytics) with offline-first sync
 - **Cloud sync**: Bidirectional Firestore sync with offline queuing via `CloudSyncService.kt`

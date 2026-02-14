@@ -9,8 +9,8 @@ import com.maa.health.data.model.SymptomLog
 import com.maa.health.data.model.SymptomType
 import com.maa.health.data.model.TriageResult
 import com.maa.health.data.model.Urgency
-import com.maa.health.data.remote.medgemma.MedGemmaService
-import com.maa.health.data.remote.medgemma.TriageContext
+import com.maa.health.data.remote.ai.MaaAIService
+import com.maa.health.data.remote.ai.TriageContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Duration
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class SymptomRepository @Inject constructor(
     private val symptomDao: SymptomDao,
-    private val medGemmaService: MedGemmaService
+    private val maaAIService: MaaAIService
 ) {
     // ═══════════════════════════════════════════════════════════════════════════
     // SYMPTOM LOGGING
@@ -73,7 +73,7 @@ class SymptomRepository @Inject constructor(
         measurements: Map<String, Float>? = null
     ): Pair<SymptomLog, TriageResult> {
         // Get triage result from AI
-        val triageResult = medGemmaService.triageSymptoms(
+        val triageResult = maaAIService.triageSymptoms(
             symptoms = symptoms,
             bodyRegion = bodyRegion,
             severity = severity,
@@ -146,7 +146,7 @@ class SymptomRepository @Inject constructor(
         isPregnant: Boolean,
         childAgeMonths: Int?
     ): DangerSignCheck {
-        val result = medGemmaService.checkDangerSigns(symptoms, isPregnant, childAgeMonths)
+        val result = maaAIService.checkDangerSigns(symptoms, isPregnant, childAgeMonths)
 
         return DangerSignCheck(
             hasDangerSigns = result.hasDangerSigns,

@@ -199,7 +199,7 @@ The following APIs need to be configured for full functionality:
 | **Firebase Auth** | Phone authentication & OTP | Mocked in tests |
 | **Firebase Firestore** | Cloud data sync | Mocked in tests |
 | **Sarvam AI** | Speech-to-text, translation | Requires API key |
-| **MedGemma** | AI symptom triage | Requires API key |
+| **Claude/Gemini AI** | AI symptom triage | Requires API keys (CLAUDE_API_KEY, GEMINI_API_KEY) |
 
 ### To Add API Keys:
 1. Edit `gradle.properties`:
@@ -238,7 +238,7 @@ Add to CI/CD pipeline:
 
 1. **Firebase Tests**: Require Firebase emulator or actual device
 2. **Sarvam AI Tests**: Require API key for voice features
-3. **MedGemma Tests**: Require API key for AI features
+3. **Claude/Gemini AI Tests**: Require API keys for AI features (CLAUDE_API_KEY, GEMINI_API_KEY)
 4. **Biometric Tests**: Require device with fingerprint sensor
 
 ---

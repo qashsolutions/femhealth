@@ -9,6 +9,8 @@
 
     <!-- Certificate pinning for API endpoints -->
     <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">api.anthropic.com</domain>
+        <domain includeSubdomains="true">generativelanguage.googleapis.com</domain>
         <domain includeSubdomains="true">api.sarvam.ai</domain>
         <domain includeSubdomains="true">firestore.googleapis.com</domain>
         <domain includeSubdomains="true">firebase.googleapis.com</domain>

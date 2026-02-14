@@ -10,8 +10,8 @@ import com.maa.health.data.model.ScreeningResult
 import com.maa.health.data.model.ScreeningType
 import com.maa.health.data.model.Severity
 import com.maa.health.data.model.Trend
-import com.maa.health.data.remote.medgemma.MedGemmaService
-import com.maa.health.data.remote.medgemma.UserContext
+import com.maa.health.data.remote.ai.MaaAIService
+import com.maa.health.data.remote.ai.UserContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -28,7 +28,7 @@ import kotlin.math.roundToInt
 class MoodRepository @Inject constructor(
     private val moodDao: MoodDao,
     private val screeningDao: ScreeningDao,
-    private val medGemmaService: MedGemmaService
+    private val maaAIService: MaaAIService
 ) {
     // ═══════════════════════════════════════════════════════════════════════════
     // MOOD LOGGING
@@ -175,7 +175,7 @@ class MoodRepository @Inject constructor(
         val score = responses.sum()
 
         // Get AI interpretation
-        val interpretation = medGemmaService.interpretScreening(
+        val interpretation = maaAIService.interpretScreening(
             screeningType, responses, userContext
         ).getOrNull()
 

@@ -757,9 +757,10 @@ object MaaFeedback {
 │  │  ├── Text-to-Speech (10 Indian languages)                               │
 │  │  └── Cost: ₹1/minute                                                    │
 │  │                                                                          │
-│  • Medical AI: Google MedGemma                                             │
-│  │  ├── MedGemma 4B (on-device for offline, multimodal)                   │
-│  │  ├── MedGemma 27B (cloud via Vertex AI for complex reasoning)          │
+│  • Medical AI: Claude Opus 4.6 (Primary) + Gemini 3 Flash (Backup)        │
+│  │  ├── On-device rule-based triage (WHO/IMCI, <50ms, offline)            │
+│  │  ├── Claude Opus 4.6 (cloud, primary for complex reasoning)            │
+│  │  ├── Gemini 3 Flash (cloud, automatic failover backup)                 │
 │  │  └── Use: Clinical reasoning, symptom analysis, risk scoring           │
 │  │                                                                          │
 │  • Agent Orchestration: LangChain / Custom                                 │
@@ -823,10 +824,11 @@ app/
 │   │   │   │   │   ├── SarvamApiService.kt
 │   │   │   │   │   ├── SpeechToTextService.kt
 │   │   │   │   │   └── TextToSpeechService.kt
-│   │   │   │   ├── medgemma/
-│   │   │   │   │   ├── MedGemmaService.kt
-│   │   │   │   │   ├── MedGemmaLocalInference.kt
-│   │   │   │   │   └── MedGemmaCloudService.kt
+│   │   │   │   ├── ai/
+│   │   │   │   │   ├── MaaAIService.kt
+│   │   │   │   │   ├── ClaudeAIService.kt
+│   │   │   │   │   ├── GeminiAIService.kt
+│   │   │   │   │   └── OnDeviceTriageEngine.kt
 │   │   │   │   └── razorpay/
 │   │   │   │       └── PaymentService.kt
 │   │   │   │
@@ -1805,7 +1807,7 @@ class OrchestratorAgent @Inject constructor(
  * Conducts validated mental health screenings (EPDS, PHQ-9, etc.)
  */
 class ScreeningAgent @Inject constructor(
-    private val medGemmaService: MedGemmaService,
+    private val maaAIService: MaaAIService,
     private val screeningRepository: ScreeningRepository
 ) {
     /**
@@ -1837,8 +1839,8 @@ class ScreeningAgent @Inject constructor(
     ): ScreeningInterpretation {
         val currentScore = responses.sum()
         
-        // Use MedGemma for nuanced interpretation
-        val analysis = medGemmaService.analyzeScreening(
+        // Use Claude/Gemini for nuanced interpretation
+        val analysis = maaAIService.interpretScreening(
             type = type,
             currentScore = currentScore,
             previousScores = previousScores,
@@ -1869,7 +1871,7 @@ class ScreeningAgent @Inject constructor(
  * Assesses symptoms and determines urgency using IMCI protocols
  */
 class TriageAgent @Inject constructor(
-    private val medGemmaService: MedGemmaService,
+    private val maaAIService: MaaAIService,
     private val healthRepository: HealthRepository
 ) {
     /**
@@ -1887,8 +1889,8 @@ class TriageAgent @Inject constructor(
         // Get user's baseline for comparison
         val baseline = healthRepository.getSymptomBaseline()
         
-        // MedGemma analysis for nuanced assessment
-        val analysis = medGemmaService.triagePregnancy(
+        // Claude/Gemini analysis for nuanced assessment
+        val analysis = maaAIService.triageSymptoms(
             symptoms = symptoms,
             week = gestationalWeek,
             baseline = baseline,
@@ -1938,8 +1940,8 @@ class TriageAgent @Inject constructor(
         // Classify dehydration
         val dehydrationClassification = classifyDehydration(symptoms)
         
-        // MedGemma for overall assessment
-        val analysis = medGemmaService.triageChild(
+        // Claude/Gemini for overall assessment
+        val analysis = maaAIService.triageSymptoms(
             symptoms = symptoms,
             ageMonths = childAgeMonths,
             pneumonia = pneumoniaClassification,
@@ -2026,12 +2028,13 @@ class LearningAgent @Inject constructor(
 }
 
 /**
- * MedGemma Service
- * Interface to Google's MedGemma models for clinical reasoning
+ * Maa AI Service
+ * Unified AI orchestrator: On-device triage + Claude Opus 4.6 (primary) + Gemini 3 Flash (backup)
  */
-class MedGemmaService @Inject constructor(
-    private val localModel: MedGemma4BLocal,  // On-device for offline
-    private val cloudModel: MedGemma27BCloud   // Cloud for complex reasoning
+class MaaAIService @Inject constructor(
+    private val onDeviceEngine: OnDeviceTriageEngine,  // On-device for offline
+    private val claudeService: ClaudeAIService,         // Primary cloud AI
+    private val geminiService: GeminiAIService           // Backup cloud AI
 ) {
     /**
      * Analyze symptoms with clinical reasoning
@@ -3098,7 +3101,7 @@ fun BreathingAssessmentScreen(
  *    ──────────────────────────────────────────
  *    Features:
  *    • Complete medication list
- *    • Drug interaction checker (MedGemma-powered)
+ *    • Drug interaction checker (Claude/Gemini-powered)
  *    • Side effect tracking + correlation
  *    • Refill reminders
  *    • Adherence tracking
@@ -3377,7 +3380,7 @@ enum class Trend {
  * REQUIRES INTERNET:
  * ──────────────────
  * • Voice interaction (Sarvam API)
- * • MedGemma 27B complex analysis
+ * • Claude Opus 4.6 complex analysis
  * • Telemedicine booking
  * • Data sync
  * • Payment
@@ -3385,7 +3388,7 @@ enum class Trend {
  * IMPLEMENTATION:
  * • Room database for local storage
  * • WorkManager for background sync
- * • MedGemma 4B on-device for basic AI
+ * • On-device rule-based triage for basic AI
  * • Cached content for education
  */
 
@@ -3469,7 +3472,7 @@ abstract class MaaDatabase : RoomDatabase() {
 │  Personalized predictions             │  ✗            │  ✓ Full           │
 │  Pattern detection                    │  ✗            │  ✓ Full           │
 │  Correlation insights                 │  ✗            │  ✓ Full           │
-│  MedGemma analysis                    │  ✓ Basic       │  ✓ Full           │
+│  Claude/Gemini analysis                │  ✓ Basic       │  ✓ Full           │
 │                                       │                │                   │
 │  OTHER                                │                │                   │
 │  ──────                               │                │                   │
@@ -3496,7 +3499,8 @@ PRE-REQUISITES:
 □ Minimum SDK 24, Target SDK 34
 □ Firebase project setup
 □ Sarvam AI API key
-□ Google Cloud project for MedGemma
+□ Anthropic API key for Claude Opus 4.6
+□ Google Gemini API key for Gemini 3 Flash (backup)
 □ Razorpay account
 
 STEP 1: PROJECT SETUP
@@ -3538,9 +3542,10 @@ STEP 6: VOICE (Sarvam AI)
 □ Implement voice recording
 □ Implement playback (TTS)
 
-STEP 7: AI (MedGemma)
-□ Set up MedGemma 4B on-device inference
-□ Set up MedGemma 27B cloud via Vertex AI
+STEP 7: AI (Claude + Gemini)
+□ Set up on-device rule-based triage engine (WHO/IMCI protocols)
+□ Set up Claude Opus 4.6 cloud API (primary)
+□ Set up Gemini 3 Flash cloud API (backup)
 □ Implement agent architecture
 □ Test clinical reasoning
 

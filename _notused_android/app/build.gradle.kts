@@ -24,6 +24,8 @@ android {
         }
 
         // Build config fields for API keys (to be configured in local.properties)
+        buildConfigField("String", "CLAUDE_API_KEY", "\"${project.findProperty("CLAUDE_API_KEY") ?: ""}\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"${project.findProperty("GEMINI_API_KEY") ?: ""}\"")
         buildConfigField("String", "SARVAM_API_KEY", "\"${project.findProperty("SARVAM_API_KEY") ?: ""}\"")
         buildConfigField("String", "GOOGLE_TRANSLATE_API_KEY", "\"${project.findProperty("GOOGLE_TRANSLATE_API_KEY") ?: ""}\"")
     }

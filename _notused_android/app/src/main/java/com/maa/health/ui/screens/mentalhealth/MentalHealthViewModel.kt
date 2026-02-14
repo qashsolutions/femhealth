@@ -7,8 +7,8 @@ import com.maa.health.data.model.MoodPattern
 import com.maa.health.data.model.ScreeningResult
 import com.maa.health.data.model.ScreeningType
 import com.maa.health.data.model.Severity
-import com.maa.health.data.remote.medgemma.LiteracyLevel
-import com.maa.health.data.remote.medgemma.UserContext
+import com.maa.health.data.remote.ai.LiteracyLevel
+import com.maa.health.data.remote.ai.UserContext
 import com.maa.health.data.repository.MoodRepository
 import com.maa.health.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

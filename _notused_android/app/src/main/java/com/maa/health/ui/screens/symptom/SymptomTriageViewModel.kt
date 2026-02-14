@@ -8,7 +8,7 @@ import com.maa.health.data.model.Severity
 import com.maa.health.data.model.SymptomLog
 import com.maa.health.data.model.SymptomType
 import com.maa.health.data.model.TriageResult
-import com.maa.health.data.remote.medgemma.TriageContext
+import com.maa.health.data.remote.ai.TriageContext
 import com.maa.health.data.repository.PregnancyRepository
 import com.maa.health.data.repository.SymptomRepository
 import com.maa.health.data.repository.UserRepository
